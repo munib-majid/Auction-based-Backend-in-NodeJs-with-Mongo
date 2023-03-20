@@ -12,7 +12,7 @@ const signup = async (req, res) => {
   //3-User Creation
   //4-Token Generate
 
-  const { username, email, password } = req.body;
+  const { username, email, password, image } = req.body;
   try {
     const existingUser = await userModel.findOne({ email: email }); //existing user check horha is email id k sath jo body me aya
     //await isliye lagaya kiun k jab tak response nahi aye ga execution agay na jaye
@@ -27,6 +27,7 @@ const signup = async (req, res) => {
       email: email,
       username: username,
       password: hashedPassword,
+      image: image,
     });
 
     const token = jwt.sign(
