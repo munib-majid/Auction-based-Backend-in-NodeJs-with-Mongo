@@ -2,23 +2,26 @@ const express = require("express");
 const notesRouter = require("./routes/notesRoutes");
 const userRouter = require("./routes/userRoutes");
 const app = express();
-const kik = require("../test.json"); //random json file
 const dotenv = require("dotenv");
-dotenv.config();
+const path = require("path");
 const multer = require("multer");
-
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 5000;
 
+dotenv.config();
+
 app.use(express.json());
-//this will convert request body into json format
+
+app.use(express.static(path.resolve(__dirname, "../public/")));
 
 app.use((req, res, next) => {
   console.log(`HTTP method - ${req.method} , URL - ${req.url}`);
   next();
 });
+
 app.use("/users", userRouter);
+
 app.use("/notes", notesRouter);
 
 mongoose
