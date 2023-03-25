@@ -23,10 +23,6 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    rePassword: {
-      type: String,
-      required: true,
-    },
     email: {
       type: String,
       required: true,
@@ -36,6 +32,17 @@ const UserSchema = mongoose.Schema(
     phoneNo: {
       type: String,
       required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    dob: {
+      type: Date,
     },
   },
   { timestamps: true }

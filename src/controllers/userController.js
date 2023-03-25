@@ -6,16 +6,10 @@ const SECRET_KEY = "notesapi";
 
 const signup = async (req, res) => {
   console.log(req.file);
-  const { firstName, lastName, password, phoneNo } = req.body;
+  const { firstName, lastName, password, phoneNo, address, gender, dob } =
+    req.body;
   const email = req.body.email.toLowerCase();
   try {
-    const existingUser = await userModel.findOne({ email: email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User Already Exist with this email" });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await userModel.create({
       email,
@@ -23,6 +17,10 @@ const signup = async (req, res) => {
       lastName,
       phoneNo,
       password: hashedPassword,
+      gender,
+      address,
+      dob,
+
       // image: req.file?.path?.replace("public", "") || "",
     });
 
