@@ -1,6 +1,9 @@
 const express = require("express");
 const notesRouter = require("./routes/notesRoutes");
 const userRouter = require("./routes/userRoutes");
+const ProductRouter = require("./routes/ProductRoutes");
+const CategoryRouter = require("./routes/CategoryRouter");
+const SubCategoryRouter = require("./routes/SubCategoryRouter");
 const app = express();
 const dotenv = require("dotenv");
 const path = require("path");
@@ -21,6 +24,12 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", userRouter);
+
+app.use("/category", CategoryRouter);
+
+app.use("/sub-category", SubCategoryRouter);
+
+app.use("/product", ProductRouter);
 
 app.use("/notes", notesRouter);
 

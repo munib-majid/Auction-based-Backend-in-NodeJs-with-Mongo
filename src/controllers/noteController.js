@@ -1,8 +1,10 @@
 const noteModel = require("../models/note");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const createNote = async (req, res, next) => {
   const { title, description } = req.body;
-  const newNote = noteModel.create({
+  const newNote = await noteModel.create({
     title: title,
     description: description,
     userId: req.userId,

@@ -2,10 +2,8 @@ const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = "notesapi";
-
 const signup = async (req, res) => {
-  console.log(req.file);
+  // console.log(req.file);
   const { firstName, lastName, password, phoneNo, address, gender, dob } =
     req.body;
   const email = req.body.email.toLowerCase();
@@ -26,7 +24,7 @@ const signup = async (req, res) => {
 
     const token = jwt.sign(
       { email: newUser.email, id: newUser._id },
-      SECRET_KEY
+      process.env.SECRET_KEY
     );
     //token hum isliye banaty ta k pata chaly k humara user sahi bhi hai jo web per kuch krna cha rha hai
     //, se pehle hamara payload hai us k bad hamari secrect key hai jo hum khud rakhty hain
@@ -59,7 +57,7 @@ const signin = async (req, res) => {
     }
     const token = jwt.sign(
       { email: existingUser.email, id: existingUser._id },
-      SECRET_KEY
+      process.env.SECRET_KEY
     );
     res.status(201).json({ user: existingUser, token: token });
   } catch (error) {
@@ -73,4 +71,16 @@ const userlist = async (req, res) => {
   res.status(200).json({ users: users });
 };
 
-module.exports = { signin, signup, userlist };
+const singleUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await userModel.findById(id);
+    res.status(201).json({ data: user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { signin, signup, userlist, singleUser };

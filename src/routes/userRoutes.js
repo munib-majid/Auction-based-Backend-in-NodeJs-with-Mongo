@@ -1,4 +1,9 @@
-const { signup, signin, userlist } = require("../controllers/userController");
+const {
+  signup,
+  signin,
+  userlist,
+  singleUser,
+} = require("../controllers/UserController");
 const ImageUpload = require("../helper/ImageUpload.js");
 const userRouter = require("express").Router();
 const userValidation = require("../middlewares/ValidateUserMiddleware");
@@ -14,5 +19,6 @@ userRouter.post(
 
 userRouter.post("/login", signin);
 userRouter.get("/signup", userlist);
+userRouter.get("/login/:id", singleUser);
 
 module.exports = userRouter;
