@@ -1,4 +1,4 @@
-const categoryModel = require("../models/Category");
+const categoryModel = require("../../models/products/Category");
 class Category {
   async setCategory(req, res) {
     const title = req.body.title;

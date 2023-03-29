@@ -1,4 +1,4 @@
-const subcategoryModel = require("../models/Sub-category");
+const subcategoryModel = require("../../models/products/Sub-category");
 
 class SubCategory {
   async setSubCategory(req, res) {

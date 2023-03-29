@@ -1,4 +1,4 @@
-const SubCategory = require("../controllers/SubCategoryController");
+const SubCategory = require("../../controllers/products/SubCategoryController");
 
 const subcategory = new SubCategory();
 

@@ -1,4 +1,4 @@
-const userModel = require("../models/user");
+const userModel = require("../../models/users/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -76,7 +76,11 @@ const singleUser = async (req, res) => {
 
   try {
     const user = await userModel.findById(id);
-    res.status(201).json({ data: user });
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.SECRET_KEY
+    );
+    res.status(201).json({ data: user, token: token });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

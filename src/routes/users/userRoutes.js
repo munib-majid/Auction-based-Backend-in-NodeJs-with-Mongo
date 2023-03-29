@@ -3,10 +3,10 @@ const {
   signin,
   userlist,
   singleUser,
-} = require("../controllers/UserController");
-const ImageUpload = require("../helper/ImageUpload.js");
+} = require("../../controllers/users/UserController");
+const ImageUpload = require("../../helper/ImageUpload.js");
 const userRouter = require("express").Router();
-const userValidation = require("../middlewares/ValidateUserMiddleware");
+const userValidation = require("../../middlewares/ValidateUserMiddleware");
 // const UserController = require("../controllers/userController");
 // var user = new UserController();
 const imageUploader = new ImageUpload("public/dp");

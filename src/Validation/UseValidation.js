@@ -1,6 +1,6 @@
 const moment = require("moment/moment");
 const yup = require("yup");
-const userModel = require("../models/user");
+const userModel = require("../models/users/user");
 
 const UserSchema = yup.object({
   firstName: yup

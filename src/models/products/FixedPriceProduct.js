@@ -16,21 +16,21 @@ const ProductSchema = mongoose.Schema(
       required: true,
     },
 
-    price: {
+    productPrice: {
       type: Number,
       required: true,
     },
 
-    subcategoryId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Subcategory",
-      required: true,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    // subcategoryId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Subcategory",
+    //   required: true,
+    // },
+    // userId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );

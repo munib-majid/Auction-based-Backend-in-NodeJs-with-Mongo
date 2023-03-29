@@ -1,5 +1,5 @@
-const auth = require("../middlewares/auth");
-const Category = require("../controllers/CategoryController");
+const auth = require("../../middlewares/auth");
+const Category = require("../../controllers/products/CategoryController");
 
 const category = new Category();
 
