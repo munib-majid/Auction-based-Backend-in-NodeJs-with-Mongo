@@ -1,6 +1,7 @@
 const express = require("express");
 const notesRouter = require("./routes/notesRoutes");
 const userRouter = require("./routes/users/userRoutes");
+const SellerRatingRouter = require("./routes/users/SellerRatingRoute");
 const ProductRouter = require("./routes/products/ProductRoutes");
 const CategoryRouter = require("./routes/products/CategoryRouter");
 const SubCategoryRouter = require("./routes/products/SubCategoryRouter");
@@ -12,12 +13,13 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 5000;
+global.public_path = path.resolve(__dirname, "../public");
 
 dotenv.config();
 
 app.use(express.json());
 
-app.use(express.static(path.resolve(__dirname, "../public/")));
+app.use(express.static(public_path));
 
 app.use((req, res, next) => {
   console.log(`HTTP method - ${req.method} , URL - ${req.url}`);
@@ -33,6 +35,8 @@ app.use("/sub-category", SubCategoryRouter);
 app.use("/product", ProductRouter);
 
 app.use("/comment", CommentsRouter);
+
+app.use("/rating", SellerRatingRouter);
 
 app.use("/notes", notesRouter);
 

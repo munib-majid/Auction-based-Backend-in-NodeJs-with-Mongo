@@ -18,7 +18,7 @@ class Category {
       await newCategory.save();
       res.status(201).json({
         success: true,
-        message: "Successfull",
+        message: "Successful",
         data: { newCategory },
       });
     } catch (error) {
@@ -51,7 +51,7 @@ class Category {
       );
       await res.status(200).json({
         success: true,
-        message: "Successfull",
+        message: "Successful",
         data: { updatedCategory },
       });
     } catch (error) {
@@ -65,7 +65,7 @@ class Category {
       const category = await categoryModel.findByIdAndRemove(id);
       res.status(202).json({
         success: true,
-        message: "Category removed succesfully",
+        message: "Category removed successfully",
         data: { category },
       });
     } catch (error) {

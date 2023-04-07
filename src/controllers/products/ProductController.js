@@ -3,11 +3,11 @@ const fs = require("fs");
 
 class Product {
   async setProduct(req, res) {
-    const { title, description, productPrice, userId, subcategoryId } =
-      req.body;
+    const { title, description, productPrice, subcategoryId } = req.body;
     let images = req.files.map((el) => {
       return el.path?.replace("public", "");
     });
+    let userId = req.userId;
     try {
       const newProduct = await productModel.create({
         title,
@@ -29,19 +29,27 @@ class Product {
   }
   async getAllProduct(req, res) {
     try {
-      const allProducts = await productModel.find();
-      if (allProducts.length > 0) {
-        res.status(200).json({
-          success: true,
-          message: "found all products",
-          data: { allProducts },
-        });
-      } else {
-        res.status(200).json({
-          success: true,
-          message: "There are no Products ",
-        });
-      }
+      const allProducts = await productModel.find().populate("subcategoryId");
+      res.status(200).json({
+        success: true,
+        message: "found all products",
+        data: { allProducts },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error });
+    }
+  }
+  async getSpecificProductSubCategory(req, res) {
+    try {
+      const allProducts = await productModel
+        .find({ subcategoryId: req.params.subcategory_id })
+        .populate("subcategoryId");
+      res.status(200).json({
+        success: true,
+        message: "found all products",
+        data: { allProducts },
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: error });
@@ -69,34 +77,36 @@ class Product {
     // };
   }
   async deleteProduct(req, res) {
-    //   const id = req.params.id;
-    //   try {
-    //     // const productToBeDelete = await productModel.findByIdAndDelete(id);
-    //     const productToBeDelete = await productModel.findOne({ _id: id });
-    //     console.log(`the product is ${productToBeDelete}`);
-    //     for (let i in productToBeDelete.images) {
-    //       const path = JSON.stringify(productToBeDelete.images[i]);
-    //       console.log(`path is ${path}`);
-    //       try {
-    //         fs.unlinkSync(path);
-    //         // console.log("File removed:", path);
-    //       } catch (err) {
-    //         console.error(err);
-    //       }
-    //     }
-    //     await productToBeDelete.delete();
-    //     res.status(202).json({
-    //       success: true,
-    //       message: "Product deleted successfully",
-    //       data: { productToBeDelete },
-    //     });
-    //   } catch (error) {
-    //     res.status(500).json({
-    //       sucess: false,
-    //       message: "Product was not deleted maybe it was not not found",
-    //       error,
-    //     });
-    //   }
+    const id = req.params.id;
+    try {
+      // const productToBeDelete = await productModel.findByIdAndDelete(id);
+      const productToBeDelete = await productModel.findOne({ _id: id });
+      if (!productToBeDelete) {
+        throw "Product not found.";
+      }
+      let images = productToBeDelete.images;
+      await productModel.findOneAndDelete({ _id: id });
+      for (let path of images) {
+        console.log(`path is ${public_path}${path}`);
+        try {
+          fs.unlinkSync(`${public_path}${path}`);
+          // console.log("File removed:", path);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      res.status(202).json({
+        success: true,
+        message: "Product deleted successfully",
+        data: { productToBeDelete },
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.status(422).json({
+        success: false,
+        message: error || error.message,
+      });
+    }
   }
 }
 

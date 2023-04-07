@@ -10,11 +10,12 @@ const auth = (req, res, next) => {
       // we are using id that we have send while creating the token to get acess to somethings
 
       req.userId = user.id;
+      next();
+
       // now we have added user id into req too
     } else {
       res.status(401).json({ message: "Unauthorized User" });
     }
-    next();
   } catch (error) {
     res.status(401).send(error);
   }
