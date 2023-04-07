@@ -9,13 +9,15 @@ const CommentsRouter = require("./routes/products/CommentsRouter");
 const app = express();
 const dotenv = require("dotenv");
 const path = require("path");
-const multer = require("multer");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const port = process.env.PORT || 5000;
 global.public_path = path.resolve(__dirname, "../public");
 
 dotenv.config();
+
+app.use(cors());
 
 app.use(express.json());
 
