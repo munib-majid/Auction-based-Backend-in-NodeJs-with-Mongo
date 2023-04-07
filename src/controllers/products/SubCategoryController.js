@@ -69,7 +69,7 @@ class SubCategory {
       const subcategory = await subcategoryModel.findByIdAndRemove(id);
       res.status(202).json({
         success: true,
-        message: "SubCategory removed succesfully",
+        message: "SubCategory removed successfully",
         data: { subcategory },
       });
     } catch (error) {

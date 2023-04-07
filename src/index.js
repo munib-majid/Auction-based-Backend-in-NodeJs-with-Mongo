@@ -4,6 +4,7 @@ const userRouter = require("./routes/users/userRoutes");
 const ProductRouter = require("./routes/products/ProductRoutes");
 const CategoryRouter = require("./routes/products/CategoryRouter");
 const SubCategoryRouter = require("./routes/products/SubCategoryRouter");
+const CommentsRouter = require("./routes/products/CommentsRouter");
 const app = express();
 const dotenv = require("dotenv");
 const path = require("path");
@@ -30,6 +31,8 @@ app.use("/category", CategoryRouter);
 app.use("/sub-category", SubCategoryRouter);
 
 app.use("/product", ProductRouter);
+
+app.use("/comment", CommentsRouter);
 
 app.use("/notes", notesRouter);
 
