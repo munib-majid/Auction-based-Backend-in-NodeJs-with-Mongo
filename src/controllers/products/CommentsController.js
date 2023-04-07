@@ -1,7 +1,8 @@
 const commentModel = require("../../models/products/CommentsModel");
 class Comments {
   async setComments(req, res, next) {
-    const { postId, userId, comment } = req.body;
+    const { postId, comment } = req.body;
+    const userId = req.userId;
     const newComment = await commentModel.create({
       postId,
       userId,
@@ -15,24 +16,37 @@ class Comments {
         data: { newComment },
       });
     } catch (error) {
-      res.status(500).json({
+      res.status(422).json({
         success: false,
-        message: "comment was not posted ",
-        error: { error },
+        message: error.message,
       });
     }
   }
+  async allcomments(req, res, next) {
+    try {
+      const allComments = await commentModel.find();
+      res.status(200).json({ success: true, data: allComments });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  }
   async getComments(req, res, next) {
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
+    console.log(req.params.post_id);
+    try {
+      const allCommentsOfPost = await commentModel.find({
+        postId: req.params.post_id,
+      });
+      // .populate("postId");
+      res.status(200).json({
+        success: true,
+        message: "found all comments of post",
+        data: { allCommentsOfPost },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
   }
   async putComments(req, res, next) {
     const id = req.params.id;

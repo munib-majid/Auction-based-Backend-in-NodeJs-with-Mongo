@@ -23,8 +23,25 @@ class Product {
         data: { newProduct },
       });
     } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+  async getAllProductsOfAUser(req, res) {
+    try {
+      const allProducts = await productModel
+        .find({ userId: req.params.userId_products })
+        .populate("userId");
+      res.status(200).json({
+        success: true,
+        message: "found all products of user",
+        data: { allProducts },
+      });
+    } catch (error) {
       console.log(error);
-      res.status(500).json({ error: error });
+      res.status(500).json({ error: error.message });
     }
   }
   async getAllProduct(req, res) {
@@ -36,8 +53,10 @@ class Product {
         data: { allProducts },
       });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: error });
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
     }
   }
   async getSpecificProductSubCategory(req, res) {
@@ -52,7 +71,10 @@ class Product {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: error });
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
     }
   }
   async updateProduct(req, res) {

@@ -8,6 +8,7 @@ const product = new Product();
 const ProductRouter = require("express").Router();
 
 ProductRouter.get("/", auth, product.getAllProduct);
+ProductRouter.get("/:userId_products", auth, product.getAllProductsOfAUser);
 ProductRouter.get(
   "/:subcategory_id",
   auth,
