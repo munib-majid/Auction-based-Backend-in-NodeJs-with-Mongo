@@ -56,25 +56,47 @@ class Product {
     }
   }
   async updateProduct(req, res) {
-    // const id = req.params.id;
-    // const productToBeUpdated = await productModel.findByIdAndUpdate({
-    //   _id: id,
-    // });
-    // const { title, description, productPrice, userId, subcategoryId } =
-    //   req.body;
-    // let images = req.files.map((el) => {
-    //   return el.path?.replace("public", "");
-    // });
-    // const updatedProduct = {
-    //   title: title,
-    //   description: description,
-    //   productPrice: productPrice,
-    //   userId,
-    //   subcategoryId,
-    //   images: images.map((el) => {
-    //     return el.path;
-    //   }),
-    // };
+    const id = req.params.id;
+    const { title, description, productPrice, subcategoryId } = req.body;
+    console.log(req.body);
+
+    try {
+      const productToBeUpdated = await productModel.findOne({
+        _id: id,
+      });
+      let userId = productToBeUpdated.userId;
+      const loggedInUserId = req.userId;
+      if (loggedInUserId != userId) {
+        throw new Error("You cannot update this product.");
+      }
+      if (!productToBeUpdated) {
+        throw new Error("Product not found");
+      }
+
+      // let images = req.files.map((el) => {
+      //   return el.path?.replace("public", "");
+      // });
+      let updatedProduct = await productModel.findByIdAndUpdate(
+        id,
+        {
+          title,
+          description,
+          productPrice,
+          subcategoryId,
+        },
+        { new: true }
+      );
+      res.status(200).json({
+        success: true,
+        message: "Product updated successfully.",
+        data: updatedProduct,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
   }
   async deleteProduct(req, res) {
     const id = req.params.id;
@@ -82,7 +104,7 @@ class Product {
       // const productToBeDelete = await productModel.findByIdAndDelete(id);
       const productToBeDelete = await productModel.findOne({ _id: id });
       if (!productToBeDelete) {
-        throw "Product not found.";
+        throw new Error("Product not found");
       }
       let images = productToBeDelete.images;
       await productModel.findOneAndDelete({ _id: id });
@@ -101,10 +123,9 @@ class Product {
         data: { productToBeDelete },
       });
     } catch (error) {
-      console.log(error.message);
       res.status(422).json({
         success: false,
-        message: error || error.message,
+        message: error.message,
       });
     }
   }

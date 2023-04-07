@@ -19,7 +19,12 @@ ProductRouter.post(
   imageUploader.getUpload().array("product_picture"),
   product.setProduct
 );
-ProductRouter.put("/:id", product.updateProduct);
+ProductRouter.post(
+  "/:id",
+  auth,
+  imageUploader.getUpload().array("product_picture"),
+  product.updateProduct
+);
 ProductRouter.delete("/:id", auth, product.deleteProduct);
 
 module.exports = ProductRouter;
