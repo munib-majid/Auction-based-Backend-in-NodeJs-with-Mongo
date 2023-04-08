@@ -43,11 +43,11 @@ const UserSchema = yup.object({
 
   address: yup.string().required("Please enter your address"),
   dob: yup
-    .string()
+    .date()
     .required()
-    .matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
+    // .matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
     .test("valid_date", "Please enter valid date.", (value) => {
-      let dob = moment(value, "YYYY-MM-DD");
+      let dob = moment(value, "YYYY-MM-DD", true);
       return dob.isValid();
     })
     .test("dob", "DOB must be greater or equal to 18 years", (value) => {
