@@ -31,6 +31,10 @@ const ProductSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    productType: {
+      type: String,
+      enum: ["used", "bidding"],
+    },
   },
   { timestamps: true }
 );

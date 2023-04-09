@@ -3,7 +3,8 @@ const fs = require("fs");
 
 class Product {
   async setProduct(req, res) {
-    const { title, description, productPrice, subcategoryId } = req.body;
+    const { title, description, productPrice, subcategoryId, productType } =
+      req.body;
     let images = req.files.map((el) => {
       return el.path?.replace("public", "");
     });
@@ -16,6 +17,7 @@ class Product {
         images,
         userId,
         subcategoryId,
+        productType,
       });
       res.status(201).json({
         success: true,

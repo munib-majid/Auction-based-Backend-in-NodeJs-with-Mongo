@@ -2,12 +2,13 @@ const Product = require("../../controllers/products/ProductController");
 const ImageUpload = require("../../helper/ImageUpload.js");
 const imageUploader = new ImageUpload("public/product");
 const auth = require("../../middlewares/auth");
+const role = require("../../middlewares/role");
 
 const product = new Product();
 
 const ProductRouter = require("express").Router();
 
-ProductRouter.get("/", auth, product.getAllProduct);
+ProductRouter.get("/", auth, role(["buyer", "seller"]), product.getAllProduct);
 ProductRouter.get("/:userId_products", auth, product.getAllProductsOfAUser);
 ProductRouter.get(
   "/:subcategory_id",

@@ -44,6 +44,10 @@ const UserSchema = mongoose.Schema(
     dob: {
       type: Date,
     },
+    role: {
+      type: String,
+      default: "buyer",
+    },
   },
   { timestamps: true }
 );

@@ -6,6 +6,7 @@ const ProductRouter = require("./routes/products/ProductRoutes");
 const CategoryRouter = require("./routes/products/CategoryRouter");
 const SubCategoryRouter = require("./routes/products/SubCategoryRouter");
 const CommentsRouter = require("./routes/products/CommentsRouter");
+const BidsAgainstPostRouter = require("./routes/products/BidsAgainstPostRouter");
 const app = express();
 const dotenv = require("dotenv");
 const path = require("path");
@@ -39,6 +40,8 @@ app.use("/product", ProductRouter);
 app.use("/comment", CommentsRouter);
 
 app.use("/rating", SellerRatingRouter);
+
+app.use("/bidding", BidsAgainstPostRouter);
 
 app.use("/notes", notesRouter);
 

@@ -1,6 +1,7 @@
 const userModel = require("../../models/users/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const SellerRating = require("../../models/users/SellerRating");
 
 const signup = async (req, res) => {
   // console.log(req.file);
@@ -72,7 +73,7 @@ const userlist = async (req, res) => {
 };
 
 const singleUser = async (req, res) => {
-  const id = req.params.id;
+  const id = req.userId;
 
   try {
     const user = await userModel.findById(id);
@@ -80,7 +81,20 @@ const singleUser = async (req, res) => {
       { email: user.email, id: user._id },
       process.env.SECRET_KEY
     );
-    res.status(201).json({ data: user, token: token });
+    //
+    //
+    // const ratings = await SellerRating.find({
+    //   sellerId: id,
+    // });
+    // let ratingAverage = null;
+    // let temp = null;
+    // for (let i in ratings) {
+    //   temp += ratings[i].rating;
+    // }
+    // ratingAverage = temp / ratings.length;
+    //
+    //
+    res.status(201).json({ data: user, rating: ratingAverage, token: token });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

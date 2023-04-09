@@ -1,8 +1,24 @@
 const SellerRatingModel = require("../../models/users/SellerRating");
+const mongoose = require("mongoose");
 class SellerRating {
   async getUserRating(req, res, next) {
     const id = req.params.seller_id;
+    // console.log({ id });
     try {
+      const ratingAvg = await SellerRatingModel.aggregate([
+        {
+          $match: {
+            sellerId: new mongoose.Types.ObjectId(id), //aik seller ka data aye ga
+          },
+        },
+        {
+          $group: {
+            _id: "$sellerId", //pipelines id
+            avgRating: { $sum: "$rating" },
+          },
+        },
+      ]);
+      return res.send(ratingAvg);
       const ratings = await SellerRatingModel.find({
         sellerId: id,
       });
@@ -30,44 +46,35 @@ class SellerRating {
       if (sellerId == userId) {
         throw new Error("user cannot rate itself");
       }
-      const alreadySubmittedRating = await SellerRatingModel.find({
-        sellerId: sellerId,
-      });
+      // const alreadySubmittedRating = await SellerRatingModel.find({
+      //   sellerId: sellerId,
+      // });
 
-      let ratings = null;
-      let newRating;
-      for (let i in alreadySubmittedRating) {
-        //checks for already existing userRating for seller
-        if (userId == alreadySubmittedRating[i].userId) {
-          ratings = alreadySubmittedRating[i]._id;
-        }
-      }
+      // for (let i in alreadySubmittedRating) {
+      //   //checks for already existing userRating for seller
+      //   if (userId == alreadySubmittedRating[i].userId) {
+      //     ratings = alreadySubmittedRating[i]._id;
+      //   }
+      // }
       //if rating for seller with user already exists then it will update the old rating
-      if (ratings) {
-        newRating = await SellerRatingModel.findByIdAndUpdate(
-          {
-            _id: ratings,
-          },
-          { rating: rating },
-          { new: true }
-        );
-      } else {
-        newRating = await SellerRatingModel.create({
-          userId,
+      const newRating = await SellerRatingModel.findOneAndUpdate(
+        {
           sellerId,
-          rating,
-        });
+          userId,
+        },
+        { rating: rating },
+        { new: true, upsert: true }
+      );
 
-        await newRating.save();
-      }
+      await newRating.save();
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         message: "rating was submitted successfully",
         data: newRating,
       });
     } catch (error) {
-      res.status(422).json({
+      return res.status(422).json({
         success: false,
         message: error.message,
       });
