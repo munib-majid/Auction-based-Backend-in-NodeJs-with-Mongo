@@ -17,7 +17,7 @@ class SubCategory {
       categoryId,
     });
     try {
-      console.log(newSubCategory);
+      // console.log(newSubCategory);
       await newSubCategory.save();
       res.status(201).json({
         success: true,
@@ -27,6 +27,25 @@ class SubCategory {
     } catch (error) {
       console.log(error);
       res.status(500).send(error);
+    }
+  }
+  async getSubCategories(req, res) {
+    const id = req.params.category_id;
+    try {
+      const subCategories = await subcategoryModel.find({
+        categoryId: id,
+      });
+      return res.status(200).json({
+        success: true,
+        message: "all subcategories are found",
+        data: subCategories,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: "something went wrong subcategories was not found",
+        error: error.message,
+      });
     }
   }
   async getAllSubCategory(req, res) {
@@ -39,7 +58,7 @@ class SubCategory {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).send(error);
+      res.status(500).send(error.message);
     }
   }
   async updateSubCategory(req, res) {

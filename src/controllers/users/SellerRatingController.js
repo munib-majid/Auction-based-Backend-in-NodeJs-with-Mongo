@@ -14,10 +14,11 @@ class SellerRating {
         {
           $group: {
             _id: "$sellerId", //pipelines id
-            avgRating: { $sum: "$rating" },
+            avgRating: { $avg: "$rating" },
           },
         },
       ]);
+      console.log(ratingAvg);
       return res.send(ratingAvg);
       const ratings = await SellerRatingModel.find({
         sellerId: id,
