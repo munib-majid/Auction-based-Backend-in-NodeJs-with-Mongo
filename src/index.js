@@ -1,6 +1,7 @@
 const express = require("express");
 const notesRouter = require("./routes/notesRoutes");
 const userRouter = require("./routes/users/userRoutes");
+const AdminRouter = require("./routes/Admin/AdminRoutes");
 const SellerRatingRouter = require("./routes/users/SellerRatingRoute");
 const ProductRouter = require("./routes/products/ProductRoutes");
 const CategoryRouter = require("./routes/products/CategoryRouter");
@@ -30,6 +31,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", userRouter);
+
+app.use("/admin", AdminRouter);
 
 app.use("/category", CategoryRouter);
 

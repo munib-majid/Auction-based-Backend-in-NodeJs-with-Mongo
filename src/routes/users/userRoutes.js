@@ -7,6 +7,7 @@ const {
 const ImageUpload = require("../../helper/ImageUpload.js");
 const userRouter = require("express").Router();
 const userValidation = require("../../middlewares/ValidateUserMiddleware");
+const userLoginValidation = require("../../middlewares/ValidateUserLogin");
 // const UserController = require("../controllers/userController");
 // var user = new UserController();
 const imageUploader = new ImageUpload("public/dp");
@@ -17,7 +18,7 @@ userRouter.post(
   signup
 );
 
-userRouter.post("/login", signin);
+userRouter.post("/login", userLoginValidation, signin);
 userRouter.get("/signup", userlist);
 userRouter.get("/login/:id", singleUser);
 

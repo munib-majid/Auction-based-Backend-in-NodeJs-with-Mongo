@@ -44,9 +44,7 @@ const signin = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({ email: email });
     if (!existingUser) {
-      return res
-        .status(404)
-        .json({ message: "User does not exist with this email" });
+      throw new Error("User with this email does not exist");
     }
     const matchedPassword = await bcrypt.compare(
       password,
@@ -54,7 +52,7 @@ const signin = async (req, res) => {
     );
     //yeh jo password body se aya aur jo hashed password para undono ko match kre ga
     if (!matchedPassword) {
-      res.status(400).json({ message: "wrong password " });
+      throw new Error("Wrong Password Please Enter Correct password");
     }
     const token = jwt.sign(
       { email: existingUser.email, id: existingUser._id },
@@ -63,7 +61,7 @@ const signin = async (req, res) => {
     res.status(201).json({ user: existingUser, token: token });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 };
 
@@ -81,23 +79,10 @@ const singleUser = async (req, res) => {
       { email: user.email, id: user._id },
       process.env.SECRET_KEY
     );
-    //
-    //
-    // const ratings = await SellerRating.find({
-    //   sellerId: id,
-    // });
-    // let ratingAverage = null;
-    // let temp = null;
-    // for (let i in ratings) {
-    //   temp += ratings[i].rating;
-    // }
-    // ratingAverage = temp / ratings.length;
-    //
-    //
-    res.status(201).json({ data: user, rating: ratingAverage, token: token });
+
+    res.status(201).json({ data: user, token: token });
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 };
 
