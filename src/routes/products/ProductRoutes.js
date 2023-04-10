@@ -9,7 +9,12 @@ const product = new Product();
 const ProductRouter = require("express").Router();
 
 ProductRouter.get("/", auth, role(["buyer", "seller"]), product.getAllProduct);
-ProductRouter.get("/:userId_products", auth, product.getAllProductsOfAUser);
+ProductRouter.get(
+  "/user_product/:userId_products",
+  auth,
+  product.getAllProductsOfAUser
+);
+ProductRouter.get("/specific_product/:product_id", auth, product.getOneProduct);
 ProductRouter.get(
   "/:subcategory_id",
   auth,

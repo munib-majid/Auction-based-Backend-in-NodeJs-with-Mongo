@@ -38,6 +38,12 @@ class BidAgainstPost {
       } else {
         //fist time bid and you will create the timer here
         console.log("in else");
+        const setDateInProduct = await ProductModel.findByIdAndUpdate(
+          { _id: productId },
+          { timeStarted: Date.now() },
+          { new: true }
+        );
+        console.log(`the data saved is ${Date()}`);
       }
 
       const bidding = await BidsAgainstPostModel.findOneAndUpdate(

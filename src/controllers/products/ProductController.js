@@ -31,6 +31,21 @@ class Product {
       });
     }
   }
+  async getOneProduct(req, res) {
+    try {
+      const product = await productModel.findById({
+        _id: req.params.product_id,
+      });
+      res
+        .status(200)
+        .json({ success: true, message: "Product is found", data: product });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
   async getAllProductsOfAUser(req, res) {
     try {
       const allProducts = await productModel
@@ -48,7 +63,8 @@ class Product {
   }
   async getAllProduct(req, res) {
     try {
-      const allProducts = await productModel.find().populate("subcategoryId");
+      const allProducts =
+        await productModel.find(); /*.populate("subcategoryId");*/
       res.status(200).json({
         success: true,
         message: "found all products",
