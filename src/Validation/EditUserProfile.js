@@ -2,7 +2,7 @@ const moment = require("moment/moment");
 const yup = require("yup");
 const userModel = require("../models/users/user");
 
-const UserSchema = yup.object({
+const EditUserSchema = yup.object({
   firstName: yup
     .string()
     .required("Please enter the first name")
@@ -12,13 +12,6 @@ const UserSchema = yup.object({
     .string()
     .required("Please enter the last name")
     .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-
-  rePassword: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match")
-    .required("Please re-enter the password"),
-
-  password: yup.string().min(3).max(15).required("Please enter the password"),
 
   phoneNo: yup
     .string()
@@ -36,16 +29,10 @@ const UserSchema = yup.object({
       return existingUser ? false : true;
     }),
 
-  gender: yup
-    .string()
-    .matches(/^(?:male|female|Male|Female|FEMALE|MALE|M|F|m|f)$/)
-    .required("Please enter the gender"),
-
   address: yup.string().required("Please enter your address"),
   dob: yup
     .date()
     .required()
-    // .matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
     .test("valid_date", "Please enter valid date.", (value) => {
       let dob = moment(value, "YYYY-MM-DD", true);
       return dob.isValid();
@@ -59,4 +46,4 @@ const UserSchema = yup.object({
     }),
 });
 
-module.exports = UserSchema;
+module.exports = EditUserSchema;

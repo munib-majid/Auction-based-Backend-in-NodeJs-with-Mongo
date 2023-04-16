@@ -5,16 +5,17 @@ class Product {
   async setProduct(req, res) {
     const { title, description, productPrice, subcategoryId, productType } =
       req.body;
-    let images = req.files.map((el) => {
+    let images = req.files?.map((el) => {
       return el.path?.replace("public", "");
     });
+
     let userId = req.userId;
     try {
       const newProduct = await productModel.create({
         title,
         description,
         productPrice,
-        images,
+        images: images || [],
         userId,
         subcategoryId,
         productType,
