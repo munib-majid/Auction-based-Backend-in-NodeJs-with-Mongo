@@ -23,8 +23,8 @@ userRouter.post(
 userRouter.post(
   "/edit",
   auth,
-  // EditUserValidation, issue arha is me
   imageUploader.getUpload().single("profile_picture"),
+  EditUserValidation,
   editUser
 );
 userRouter.patch(
