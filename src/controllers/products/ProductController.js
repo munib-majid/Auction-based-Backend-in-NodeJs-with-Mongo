@@ -62,6 +62,36 @@ class Product {
       res.status(500).json({ error: error.message });
     }
   }
+  async getAllProductsBids(req, res) {
+    try {
+      const allProducts = await productModel
+        .find({ productType: "Bidding Item" })
+        .populate("userId");
+      res.status(200).json({
+        success: true,
+        message: "found all products of type bidding",
+        data: { allProducts },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+  async getAllProductsUsed(req, res) {
+    try {
+      const allProducts = await productModel
+        .find({ productType: "Used Item" })
+        .populate("userId");
+      res.status(200).json({
+        success: true,
+        message: "found all products of type bidding",
+        data: { allProducts },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  }
   async getAllProduct(req, res) {
     try {
       const allProducts =
