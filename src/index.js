@@ -4,6 +4,7 @@ const userRouter = require("./routes/users/userRoutes");
 const AdminRouter = require("./routes/Admin/AdminRoutes");
 const SellerRatingRouter = require("./routes/users/SellerRatingRoute");
 const ProductRouter = require("./routes/products/ProductRoutes");
+const FavoriteRouter = require("./routes/products/FavoritePostRouter");
 const CategoryRouter = require("./routes/products/CategoryRouter");
 const SubCategoryRouter = require("./routes/products/SubCategoryRouter");
 const CommentsRouter = require("./routes/products/CommentsRouter");
@@ -41,6 +42,8 @@ app.use("/sub-category", SubCategoryRouter);
 app.use("/product", ProductRouter);
 
 app.use("/comment", CommentsRouter);
+
+app.use("/favorite", FavoriteRouter);
 
 app.use("/rating", SellerRatingRouter);
 
