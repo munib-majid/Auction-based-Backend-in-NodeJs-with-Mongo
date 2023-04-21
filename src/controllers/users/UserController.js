@@ -1,13 +1,40 @@
 const userModel = require("../../models/users/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const SellerRating = require("../../models/users/SellerRating");
 const fs = require("fs");
+const cities = require("../../Cities.json");
 
+const cityData = async (req, res, next) => {
+  return res.status(200).json({ data: cities });
+};
+const editRole = async (req, res) => {
+  const { role } = req.body;
+  try {
+    const editRole = await userModel.findByIdAndUpdate(
+      { _id: req.userId },
+      { role },
+      { new: true }
+    );
+    return res.status(201).json({ success: true, data: editRole });
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "User role was not updated",
+      error: error.message,
+    });
+  }
+};
 const signup = async (req, res) => {
-  // console.log(req.file);
-  const { firstName, lastName, password, phoneNo, address, gender, dob } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    password,
+    phoneNo,
+    address,
+    gender,
+    dob,
+    currentCity,
+  } = req.body;
   const email = req.body.email.toLowerCase();
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,28 +47,25 @@ const signup = async (req, res) => {
       gender,
       address,
       dob,
-
-      // image: req.file?.path?.replace("public", "") || "",
+      currentCity,
     });
 
     const token = jwt.sign(
       { email: newUser.email, id: newUser._id },
       process.env.SECRET_KEY
     );
-    //token hum isliye banaty ta k pata chaly k humara user sahi bhi hai jo web per kuch krna cha rha hai
-    //, se pehle hamara payload hai us k bad hamari secrect key hai jo hum khud rakhty hain
     return res.status(201).json({ user: newUser, token: token });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return res.status(422).json({
+      success: false,
+      message: "User was not created",
+      error: error.message,
+    });
   }
 };
 
 const signin = async (req, res) => {
-  //user email exits ya nahi
-  //password match horha ya nahi
   const { email, password } = req.body;
-
   try {
     const existingUser = await userModel.findOne({ email: email });
     if (!existingUser) {
@@ -51,7 +75,6 @@ const signin = async (req, res) => {
       password,
       existingUser.password
     );
-    //yeh jo password body se aya aur jo hashed password para undono ko match kre ga
     if (!matchedPassword) {
       throw new Error("Wrong Password Please Enter Correct password");
     }
@@ -59,15 +82,25 @@ const signin = async (req, res) => {
       { email: existingUser.email, id: existingUser._id },
       process.env.SECRET_KEY
     );
-    return res.status(201).json({ user: existingUser, token: token });
+    return res.status(201).json({
+      success: true,
+      message: "user signed in successfully ",
+      user: existingUser,
+      token: token,
+    });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error.message);
+    return res.status(422).json({
+      success: false,
+      message: "User was not logged in",
+      error: error.message,
+    });
   }
 };
+
 const editUser = async (req, res) => {
   const userId = req.userId;
-  const { firstName, lastName, email, phoneNo, address, dob } = req.body;
+  const { firstName, lastName, email, phoneNo, address, dob, currentCity } =
+    req.body;
   if (!req.file) {
     //if we do not have dp we will check for older dp and delete it
     const dpDelete = await userModel.findOne({ _id: userId });
@@ -92,6 +125,7 @@ const editUser = async (req, res) => {
         phoneNo,
         address,
         dob,
+        currentCity,
         dp: req.file?.path?.replace("public", "") || "",
       },
       { new: true }
@@ -105,6 +139,33 @@ const editUser = async (req, res) => {
     return res.status(422).json({
       success: false,
       message: "User Profile was not edited",
+      error: error.message,
+    });
+  }
+};
+const editSeller = async (req, res) => {
+  const userId = req.userId;
+  const { email, phoneNo, currentCity } = req.body;
+
+  try {
+    const editedProfile = await userModel.findByIdAndUpdate(
+      { _id: userId },
+      {
+        email,
+        phoneNo,
+        currentCity,
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Profile Edited successfully.",
+      data: editedProfile,
+    });
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "Seller Profile was not edited",
       error: error.message,
     });
   }
@@ -170,6 +231,32 @@ const singleUser = async (req, res) => {
   }
 };
 
+const becomeSeller = async (req, res) => {
+  const { cnicNumber } = req.body;
+  let cnicPictures = req.files?.map((el) => {
+    return el.path?.replace("public", "");
+  });
+  console.log(req.file);
+  console.log(`cnic front ${cnicPictures[0]}`);
+  console.log(`cnic back ${cnicPictures[1]}`);
+  try {
+    // const changeCnic = await userModel.findByIdAndUpdate(
+    //   { _id: req.userId },
+    //   {
+    //     cnicNumber,
+    //   },
+    //   { new: true }
+    // );
+    res.send("seller working");
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "User Password was not changed",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   signin,
   signup,
@@ -177,4 +264,8 @@ module.exports = {
   singleUser,
   editUser,
   changePassword,
+  becomeSeller,
+  editSeller,
+  cityData,
+  editRole,
 };

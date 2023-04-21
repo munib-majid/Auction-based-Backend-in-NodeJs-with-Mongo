@@ -1,6 +1,6 @@
-const schema = require("../Validation/UserLoginValidation");
+const schema = require("../../Validation/EditSellerProfile");
 
-const userLoginValidation = async (req, res, next) => {
+const EditSellerValidation = async (req, res, next) => {
   const body = req.body;
   try {
     await schema.validate(body);
@@ -11,4 +11,4 @@ const userLoginValidation = async (req, res, next) => {
   }
 };
 
-module.exports = userLoginValidation;
+module.exports = EditSellerValidation;

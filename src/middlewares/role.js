@@ -9,14 +9,14 @@ const role = (roleName) => {
           roles = [roleName];
         }
         if (roles.includes(user.role)) next();
-        else return res.status(403).json({ message: "Forbidden" });
+        else return res.status(403).json({ message: "Forbidden User Access" });
         // now we have added user id into req too
       } else {
-        return res.status(403).json({ message: "Forbidden" });
+        return res.status(403).json({ message: "Forbidden User Access" });
       }
     } catch (error) {
       console.log(error);
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ message: "Forbidden User Access" });
     }
   };
 };

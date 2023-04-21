@@ -48,6 +48,13 @@ const UserSchema = mongoose.Schema(
       type: String,
       default: "buyer",
     },
+    cnicNumber: {
+      type: String,
+    },
+    currentCity: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

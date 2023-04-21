@@ -1,4 +1,4 @@
-const schema = require("../Validation/UseValidation");
+const schema = require("../../Validation/UseValidation");
 
 const userValidation = async (req, res, next) => {
   const body = req.body;
