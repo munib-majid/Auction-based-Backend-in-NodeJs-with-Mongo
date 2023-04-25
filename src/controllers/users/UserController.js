@@ -231,27 +231,101 @@ const singleUser = async (req, res) => {
   }
 };
 
-const becomeSeller = async (req, res) => {
+const becomeSellerCnicNumber = async (req, res) => {
   const { cnicNumber } = req.body;
-  let cnicPictures = req.files?.map((el) => {
-    return el.path?.replace("public", "");
-  });
-  console.log(req.file);
-  console.log(`cnic front ${cnicPictures[0]}`);
-  console.log(`cnic back ${cnicPictures[1]}`);
   try {
-    // const changeCnic = await userModel.findByIdAndUpdate(
-    //   { _id: req.userId },
-    //   {
-    //     cnicNumber,
-    //   },
-    //   { new: true }
-    // );
-    res.send("seller working");
+    const changeCnicNumber = await userModel.findByIdAndUpdate(
+      { _id: req.userId },
+      {
+        cnicNumber,
+      },
+      { upsert: true, new: true }
+    );
+    res.status(201).json({
+      success: true,
+      message: "Cnic Number Uploaded",
+      data: changeCnicNumber,
+    });
   } catch (error) {
     return res.status(422).json({
       success: false,
-      message: "User Password was not changed",
+      message: "User Cnic Number was not uploaded",
+      error: error.message,
+    });
+  }
+};
+
+const becomeSellerCnicFront = async (req, res) => {
+  try {
+    const checkAlreadyExistingCnic = await userModel.findById({
+      _id: req.userId,
+    });
+    const image = checkAlreadyExistingCnic.cnicFront;
+    if (image) {
+      console.log(`path is ${public_path}${image}`);
+      try {
+        fs.unlinkSync(`${public_path}${image}`);
+        console.log("cnic front image deleted");
+      } catch (error) {
+        throw new Error(
+          `Already Existing CNIC image was not deleted ${public_path}${image}`
+        );
+      }
+    }
+    const changeCnicFrontPic = await userModel.findByIdAndUpdate(
+      { _id: req.userId },
+      {
+        cnicFront: req.file?.path?.replace("public", ""),
+      },
+      { upsert: true, new: true }
+    );
+    res.status(201).json({
+      success: true,
+      message: "CnicFront Picture Uploaded",
+      data: changeCnicFrontPic,
+    });
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "User Cnic Front Picture was not uploaded",
+      error: error.message,
+    });
+  }
+};
+
+const becomeSellerCnicBack = async (req, res) => {
+  try {
+    const checkAlreadyExistingCnic = await userModel.findById({
+      _id: req.userId,
+    });
+    const image = checkAlreadyExistingCnic.cnicBack;
+    if (image) {
+      console.log(`path is ${public_path}${image}`);
+      try {
+        fs.unlinkSync(`${public_path}${image}`);
+        console.log("cnic front image deleted");
+      } catch (error) {
+        throw new Error(
+          `Already Existing CNIC image was not deleted ${public_path}${image}`
+        );
+      }
+    }
+    const changeCnicFrontPic = await userModel.findByIdAndUpdate(
+      { _id: req.userId },
+      {
+        cnicBack: req.file?.path?.replace("public", ""),
+      },
+      { upsert: true, new: true }
+    );
+    res.status(201).json({
+      success: true,
+      message: "CnicBack Picture Uploaded",
+      data: changeCnicFrontPic,
+    });
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "User Cnic Back Picture was not uploaded",
       error: error.message,
     });
   }
@@ -264,7 +338,9 @@ module.exports = {
   singleUser,
   editUser,
   changePassword,
-  becomeSeller,
+  becomeSellerCnicNumber,
+  becomeSellerCnicBack,
+  becomeSellerCnicFront,
   editSeller,
   cityData,
   editRole,

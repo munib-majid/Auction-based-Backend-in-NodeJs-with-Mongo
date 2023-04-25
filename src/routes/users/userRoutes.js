@@ -5,7 +5,9 @@ const {
   singleUser,
   editUser,
   changePassword,
-  becomeSeller,
+  becomeSellerCnicFront,
+  becomeSellerCnicNumber,
+  becomeSellerCnicBack,
   editSeller,
   cityData,
   editRole,
@@ -24,7 +26,9 @@ const auth = require("../../middlewares/auth");
 
 const imageUploader = new ImageUpload("public/dp");
 
-const cnicUploader = new ImageUpload("public/CNIC");
+const cnicFrontPic = new ImageUpload("public/CNIC_FRONT");
+
+const cnicBackPic = new ImageUpload("public/CNIC_BACK");
 
 userRouter.get("/cities", cityData);
 
@@ -55,14 +59,31 @@ userRouter.patch(
   ChangePasswordValidation,
   changePassword
 );
-
 userRouter.patch(
-  "/become-seller",
+  "/become-seller-cnic-number",
   auth,
   role(["buyer"]),
-  cnicUploader.getUpload().array("CNIC_pictures"),
+  // cnicFrontPic.getUpload().single("CNIC_front"),
   cnicValidation,
-  becomeSeller
+  becomeSellerCnicNumber
+);
+
+userRouter.patch(
+  "/become-seller-cnic-front-pic",
+  auth,
+  role(["buyer"]),
+  cnicFrontPic.getUpload().single("CNIC_front"),
+  // cnicValidation,
+  becomeSellerCnicFront
+);
+
+userRouter.patch(
+  "/become-seller-cnic-back-pic",
+  auth,
+  role(["buyer"]),
+  cnicBackPic.getUpload().single("CNIC_back"),
+  // cnicValidation,
+  becomeSellerCnicBack
 );
 
 userRouter.post("/login", userLoginValidation, signin);

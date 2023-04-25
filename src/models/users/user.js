@@ -55,6 +55,9 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    statusForDisapproval: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
