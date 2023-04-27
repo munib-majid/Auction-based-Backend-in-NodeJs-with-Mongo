@@ -34,9 +34,11 @@ class Comments {
   async getComments(req, res, next) {
     console.log(req.params.post_id);
     try {
-      const allCommentsOfPost = await commentModel.find({
-        postId: req.params.post_id,
-      });
+      const allCommentsOfPost = await commentModel
+        .find({
+          postId: req.params.post_id,
+        })
+        .populate("userId");
       // .populate("postId");
       res.status(200).json({
         success: true,
