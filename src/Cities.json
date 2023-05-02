@@ -1,4 +1,41 @@
 [
+  
+    {
+    "country": "PK",
+    "name": "Lahore",
+    "lat": "31.558",
+    "lng": "74.35071"
+    },
+    {
+    "country": "PK",
+    "name": "Islamabad",
+    "lat": "33.72148",
+    "lng": "73.04329"
+    },
+    {
+      "country": "PK",
+      "name": "Karachi",
+      "lat": "24.8608",
+      "lng": "67.0104"
+    },
+    {
+      "country": "PK",
+      "name": "Multan",
+      "lat": "30.19679",
+      "lng": "71.47824"
+    },
+    {
+      "country": "PK",
+      "name": "Peshawar",
+      "lat": "34.008",
+      "lng": "71.57849"
+    },
+    {
+      "country": "PK",
+      "name": "Quetta",
+      "lat": "30.18414",
+      "lng": "67.00141"
+    },
     {
       "country": "PK",
       "name": "Abbottabad",
@@ -923,12 +960,7 @@
       "lat": "25.39242",
       "lng": "68.37366"
     },
-    {
-      "country": "PK",
-      "name": "Islamabad",
-      "lat": "33.72148",
-      "lng": "73.04329"
-    },
+
     {
       "country": "PK",
       "name": "Islamkot",
@@ -1181,12 +1213,7 @@
       "lat": "30.76468",
       "lng": "74.12286"
     },
-    {
-      "country": "PK",
-      "name": "Karachi",
-      "lat": "24.8608",
-      "lng": "67.0104"
-    },
+    
     {
       "country": "PK",
       "name": "Karak",
@@ -1469,12 +1496,7 @@
       "lat": "32.15692",
       "lng": "74.11564"
     },
-    {
-      "country": "PK",
-      "name": "Lahore",
-      "lat": "31.558",
-      "lng": "74.35071"
-    },
+    
     {
       "country": "PK",
       "name": "Lakhi",
@@ -1751,12 +1773,7 @@
       "lat": "30.80563",
       "lng": "70.84911"
     },
-    {
-      "country": "PK",
-      "name": "Multan",
-      "lat": "30.19679",
-      "lng": "71.47824"
-    },
+    
     {
       "country": "PK",
       "name": "Muridke",
@@ -1967,12 +1984,7 @@
       "lat": "31.02021",
       "lng": "73.85333"
     },
-    {
-      "country": "PK",
-      "name": "Peshawar",
-      "lat": "34.008",
-      "lng": "71.57849"
-    },
+    
     {
       "country": "PK",
       "name": "Phalia",
@@ -2039,12 +2051,7 @@
       "lat": "30.70077",
       "lng": "68.35984"
     },
-    {
-      "country": "PK",
-      "name": "Quetta",
-      "lat": "30.18414",
-      "lng": "67.00141"
-    },
+    
     {
       "country": "PK",
       "name": "Rahim Yar Khan",
