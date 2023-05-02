@@ -8,19 +8,13 @@ const product = new Product();
 
 const ProductRouter = require("express").Router();
 
-ProductRouter.get("/", auth, role(["buyer", "seller"]), product.getAllProduct);
+ProductRouter.get("/", product.getAllProduct);
 ProductRouter.get(
   "/bid",
-  auth,
-  role(["buyer", "seller"]),
+
   product.getAllProductsBids
 );
-ProductRouter.get(
-  "/used",
-  auth,
-  role(["buyer", "seller"]),
-  product.getAllProductsUsed
-);
+ProductRouter.get("/used", product.getAllProductsUsed);
 ProductRouter.get(
   "/user_product/:userId_products",
   auth,

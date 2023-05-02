@@ -97,10 +97,38 @@ const signin = async (req, res) => {
   }
 };
 
+const editEmail = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { email } = req.body;
+    const userEmailCheck = await userModel.findOne({ email });
+    if (userEmailCheck) {
+      throw new Error("Email already exists for a account");
+    }
+    const updatedEmail = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { email },
+      { new: true }
+    );
+    return (
+      res.status(201),
+      json({
+        success: true,
+        message: "email updated successfully",
+        data: updatedEmail,
+      })
+    );
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: "Somthing happened wrong while editing email",
+      error: error.message,
+    });
+  }
+};
 const editUser = async (req, res) => {
   const userId = req.userId;
-  const { firstName, lastName, email, phoneNo, address, dob, currentCity } =
-    req.body;
+  const { firstName, lastName, phoneNo, address, dob, currentCity } = req.body;
   if (!req.file) {
     //if we do not have dp we will check for older dp and delete it
     const dpDelete = await userModel.findOne({ _id: userId });
@@ -121,7 +149,6 @@ const editUser = async (req, res) => {
       {
         firstName,
         lastName,
-        email,
         phoneNo,
         address,
         dob,
@@ -145,13 +172,12 @@ const editUser = async (req, res) => {
 };
 const editSeller = async (req, res) => {
   const userId = req.userId;
-  const { email, phoneNo, currentCity } = req.body;
+  const { phoneNo, currentCity } = req.body;
 
   try {
     const editedProfile = await userModel.findByIdAndUpdate(
       { _id: userId },
       {
-        email,
         phoneNo,
         currentCity,
       },
@@ -344,4 +370,5 @@ module.exports = {
   editSeller,
   cityData,
   editRole,
+  editEmail,
 };

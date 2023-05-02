@@ -11,6 +11,7 @@ const {
   editSeller,
   cityData,
   editRole,
+  editEmail,
 } = require("../../controllers/users/UserController");
 const ImageUpload = require("../../helper/ImageUpload.js");
 const userRouter = require("express").Router();
@@ -59,6 +60,13 @@ userRouter.patch(
   ChangePasswordValidation,
   changePassword
 );
+// userRouter.patch(
+//   "/change-email",
+//   auth,
+//   role(["buyer", "seller"]),
+//   // ChangePasswordValidation,
+//   editEmail
+// );
 userRouter.patch(
   "/become-seller-cnic-number",
   auth,

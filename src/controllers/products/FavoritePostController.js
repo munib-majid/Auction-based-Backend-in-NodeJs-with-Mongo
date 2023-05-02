@@ -4,7 +4,13 @@ class FavoritePost {
     try {
       const favoritePosts = await FavoritePostModel.find({
         userId: req.userId,
-      }).populate("postId");
+      }).populate({
+        path: "postId",
+        populate: {
+          path: "userId",
+        },
+      });
+      // .populate("postId");
       return res.status(200).json({
         success: true,
         message: "Favorite Post of user fetched successfully",
@@ -21,15 +27,36 @@ class FavoritePost {
     const { postId } = req.body;
     const userId = req.userId;
     try {
-      const newFavoritePost = await FavoritePostModel.create({
+      const deleteFavorite = await FavoritePostModel.findOneAndDelete({
         userId,
         postId,
       });
-      return res.status(201).json({
-        success: true,
-        message: "The post is added to Favorites",
-        data: newFavoritePost,
-      });
+      if (deleteFavorite) {
+        return res.status(201).json({
+          success: true,
+          message: "The post is removed from Favorites",
+          data: deleteFavorite,
+        });
+      } else {
+        const newFavoritePost = await FavoritePostModel.create({
+          userId,
+          postId,
+        });
+        return res.status(201).json({
+          success: true,
+          message: "The post is added to Favorites",
+          data: newFavoritePost,
+        });
+      }
+      // const newFavoritePost = await FavoritePostModel.create({
+      //   userId,
+      //   postId,
+      // });
+      // const newFavoritePost = await FavoritePostModel.findOneAndUpdate(
+      //   { userId },
+      //   { postId },
+      //   { new: true, upsert: true }
+      // );
     } catch (error) {
       return res.status(422).json({
         success: false,
