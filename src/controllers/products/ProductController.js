@@ -1,4 +1,7 @@
 const productModel = require("../../models/products/FixedPriceProduct");
+const BidsAgainstPostModel = require("../../models/products/BidsAgainstPostModel");
+const CommentsModel = require("../../models/products/CommentsModel");
+const FavoritesModel = require("../../models/products/FavoritePostOfUser");
 const fs = require("fs");
 
 class Product {
@@ -172,12 +175,35 @@ class Product {
 
   async deleteProduct(req, res) {
     const id = req.params.id;
+    const loggedInUserId = req.userId;
     try {
-      // const productToBeDelete = await productModel.findByIdAndDelete(id);
       const productToBeDelete = await productModel.findOne({ _id: id });
-      if (!productToBeDelete) {
+      if (productToBeDelete) {
+        let user_id = productToBeDelete.userId;
+        if (loggedInUserId != user_id) {
+          //checking for the user that this ad belongs to him
+          throw new Error(
+            "You cannot delete this product invalid user access."
+          );
+        }
+      } else {
         throw new Error("Product not found");
       }
+
+      const commentsToBeDeleted = await CommentsModel.deleteMany({
+        postId: id,
+      });
+      let bidsDeleted;
+      if (productToBeDelete.productType == "Bidding Item") {
+        const bidsToBeDeleted = await BidsAgainstPostModel.deleteMany({
+          productId: id,
+        });
+        bidsDeleted = bidsToBeDeleted;
+      }
+      const favoritesToBeDeleted = await FavoritesModel.deleteMany({
+        postId: id,
+      });
+
       let images = productToBeDelete.images;
       await productModel.findOneAndDelete({ _id: id });
       for (let path of images) {
@@ -191,8 +217,12 @@ class Product {
       }
       res.status(202).json({
         success: true,
-        message: "Product deleted successfully",
-        data: { productToBeDelete },
+        message:
+          "Product deleted successfully and its linked files are also deleted",
+        product: { productToBeDelete },
+        comments: commentsToBeDeleted,
+        favorites: favoritesToBeDeleted,
+        bids: bidsDeleted,
       });
     } catch (error) {
       res.status(422).json({

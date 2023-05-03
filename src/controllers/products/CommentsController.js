@@ -47,18 +47,26 @@ class Comments {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
   async putComments(req, res, next) {
     const id = req.params.id;
-    const newComment = { comment: comment };
+    const { comment } = req.body;
+
     try {
+      const userCheck = await commentModel.findOne({ _id: id });
+      const loggedInUserId = req.userId;
+      const userId = userCheck.userId;
+      if (loggedInUserId != userId) {
+        throw new Error("You cannot update this comment invalid user access.");
+      }
       const commentToBeUpdated = await commentModel.findByIdAndUpdate(
         { _id: id },
-        newComment,
+        comment,
         { new: true }
       );
+
       if (commentToBeUpdated != null) {
         res.status(201).json({
           success: true,
@@ -83,6 +91,12 @@ class Comments {
     const id = req.params.id;
 
     try {
+      const userCheck = await commentModel.findOne({ _id: id });
+      const loggedInUserId = req.userId;
+      const userId = userCheck.userId;
+      if (loggedInUserId != userId) {
+        throw new Error("You cannot delete this comment invalid user access.");
+      }
       const commentToBeDeleted = await commentModel.findByIdAndRemove(id);
       if (commentToBeDeleted != null) {
         res.status(201).json({
@@ -99,7 +113,7 @@ class Comments {
       res.status(500).json({
         success: false,
         message: "something went wrong",
-        error: { error },
+        error: error.message,
       });
     }
   }

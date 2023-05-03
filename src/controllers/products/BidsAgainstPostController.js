@@ -17,6 +17,16 @@ class BidAgainstPost {
       // console.log("date 2 passing value is", product.timeStarted);
 
       if (bidTimer) {
+        const date1 = new Date();
+        const date2 = new Date(product.timeStarted);
+        console.log("date1 is", date1);
+        console.log("date2 is", date2);
+        const diffInMinutes = date1.getMinutes() - date2.getMinutes();
+        console.log(diffInMinutes);
+        if (diffInMinutes >= 10080) {
+          //10080 minutes in week
+          throw new Error("Bidding time is now Expired ");
+        }
         // console.log("bid exist");
 
         const highestBid = await BidsAgainstPostModel.aggregate([
@@ -46,16 +56,7 @@ class BidAgainstPost {
         }
       } else {
         //fist time bid and you will create the timer here
-        const date1 = new Date();
-        const date2 = new Date(product.timeStarted);
-        console.log("date1 is", date1);
-        console.log("date2 is", date2);
-        const diffInMinutes = date1.getMinutes() - date2.getMinutes();
-        console.log(diffInMinutes);
-        if (diffInMinutes >= 10080) {
-          //10080 minutes in week
-          throw new Error("Bidding time is now Expired ");
-        }
+
         console.log("in else");
         const setDateInProduct = await ProductModel.findByIdAndUpdate(
           { _id: productId },
@@ -118,18 +119,27 @@ class BidAgainstPost {
           },
         },
       ]);
-      console.log(highestBid[0].maxBid);
       console.log(highestBid);
-      const highestBidUser = await UserModel.findOne({
-        _id: highestBid[0].userId,
-      });
+      let highestBidUser = "No user Has placed bid";
+      let maxBid = 0;
+      if (highestBid[0] != null) {
+        console.log("in check if that bid exist or not ");
+        let user_id = highestBid[0].userId;
+        maxBid = highestBid[0].maxBid;
+        const user = await UserModel.findOne({
+          _id: user_id,
+        });
+        highestBidUser = user;
+      }
+      // console.log(highestBid[0].maxBid);
+      // console.log(highestBid);
 
       return res.status(200).json({
         success: true,
         message:
           "found all bids Against post and its highest bid with customer",
         allBidsOfPost: allBidsAgainstPost,
-        highestBid: highestBid[0].maxBid,
+        highestBid: maxBid,
         customerThatPlacedHighestBid: highestBidUser,
       });
     } catch (error) {
