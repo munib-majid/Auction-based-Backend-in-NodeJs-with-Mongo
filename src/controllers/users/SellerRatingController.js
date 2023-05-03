@@ -1,4 +1,5 @@
 const SellerRatingModel = require("../../models/users/SellerRating");
+const UserModel = require("../../models/users/user");
 const mongoose = require("mongoose");
 class SellerRating {
   async getUserRating(req, res, next) {
@@ -46,6 +47,10 @@ class SellerRating {
     try {
       if (sellerId == userId) {
         throw new Error("user cannot rate itself");
+      }
+      const sellerCheck = await UserModel.findOne({ _id: sellerId });
+      if (sellerCheck.role != "seller") {
+        throw new Error("you cannot rate a buyer ");
       }
       // const alreadySubmittedRating = await SellerRatingModel.find({
       //   sellerId: sellerId,
