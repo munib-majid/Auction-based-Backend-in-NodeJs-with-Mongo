@@ -20,18 +20,11 @@ class SellerRating {
         },
       ]);
       console.log(ratingAvg);
-      return res.send(ratingAvg);
-      const ratings = await SellerRatingModel.find({
-        sellerId: id,
+      return res.status(200).json({
+        success: true,
+        message: "Rating of seller fetched successfully.",
+        data: ratingAvg,
       });
-      let ratingAverage = null;
-      let temp = null;
-      for (let i in ratings) {
-        temp += ratings[i].rating;
-      }
-      ratingAverage = temp / ratings.length;
-
-      res.status(200).json({ success: true, data: ratingAverage });
     } catch (error) {
       res.status(422).json({
         success: false,
@@ -50,19 +43,9 @@ class SellerRating {
       }
       const sellerCheck = await UserModel.findOne({ _id: sellerId });
       if (sellerCheck.role != "seller") {
-        throw new Error("you cannot rate a buyer ");
+        throw new Error("You cannot rate a buyer.");
       }
-      // const alreadySubmittedRating = await SellerRatingModel.find({
-      //   sellerId: sellerId,
-      // });
 
-      // for (let i in alreadySubmittedRating) {
-      //   //checks for already existing userRating for seller
-      //   if (userId == alreadySubmittedRating[i].userId) {
-      //     ratings = alreadySubmittedRating[i]._id;
-      //   }
-      // }
-      //if rating for seller with user already exists then it will update the old rating
       const newRating = await SellerRatingModel.findOneAndUpdate(
         {
           sellerId,

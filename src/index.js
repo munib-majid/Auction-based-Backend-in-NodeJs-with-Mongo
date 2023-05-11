@@ -39,7 +39,7 @@ app.use("/category", CategoryRouter);
 
 app.use("/sub-category", SubCategoryRouter);
 
-app.use("/product", ProductRouter);
+app.use("/products", ProductRouter);
 
 app.use("/comment", CommentsRouter);
 

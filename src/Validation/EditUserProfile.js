@@ -31,14 +31,18 @@ const EditUserSchema = yup.object({
 
   address: yup.string(),
   // .required("Please enter your address"),
+
   dob: yup
     .date()
-    // .required()
+    .nullable()
     .test("valid_date", "Please enter valid date.", (value) => {
+      if (!value) return true;
       let dob = moment(value, "YYYY-MM-DD", true);
       return dob.isValid();
     })
     .test("dob", "DOB must be greater or equal to 18 years", (value) => {
+      if (!value) return true;
+
       let dob = moment(value, "YYYY-MM-DD");
       let now = moment();
       let diff = now.diff(dob, "months");

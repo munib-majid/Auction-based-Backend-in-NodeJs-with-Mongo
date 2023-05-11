@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
 
       // now we have added user id into req too
     } else {
-      res.status(401).json({ message: "Unauthorized User" });
+      res.status(401).json({ message: "Unauthorized User wrong token" });
     }
   } catch (error) {
     res.status(401).send(error);
