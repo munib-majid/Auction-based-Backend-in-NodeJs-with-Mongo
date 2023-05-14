@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const cities = require("../../Cities.json");
+const checkUserForBuyerApproval = require("../../helper/StatusForUser");
 
 const cityData = async (req, res, next) => {
   return res.status(200).json({ data: cities });
@@ -128,10 +129,17 @@ const editEmail = async (req, res) => {
 };
 const editUser = async (req, res) => {
   const userId = req.userId;
+  let status;
   const { firstName, lastName, phoneNo, address, dob, currentCity } = req.body;
-  if (!req.file) {
+  console.log("req file is", req.file);
+  const dpDelete = await userModel.findOne({ _id: userId });
+  if (req.file) {
+    console.log("we have the file");
     //if we do not have dp we will check for older dp and delete it
-    const dpDelete = await userModel.findOne({ _id: userId });
+
+    if (dpDelete.cnicNumber && dpDelete.cnicFront && dpDelete.cnicBack) {
+      status = "Your req has gone to admin for approval or disapproval";
+    }
     let image = dpDelete.dp;
     if (image) {
       console.log(`path is ${public_path}${image}`);
@@ -153,10 +161,13 @@ const editUser = async (req, res) => {
         address,
         dob,
         currentCity,
-        dp: req.file?.path?.replace("public", "") || "",
+        dp: req.file?.path?.replace("public", ""),
+        $set: { tryAgainToBecomeSeller: false },
+        statusOfUser: status ? status : dpDelete.statusOfUser,
       },
       { new: true }
     );
+
     return res.status(200).json({
       success: true,
       message: "Profile Edited successfully.",
@@ -260,18 +271,34 @@ const singleUser = async (req, res) => {
 const becomeSellerCnicNumber = async (req, res) => {
   const { cnicNumber } = req.body;
   try {
-    const changeCnicNumber = await userModel.findByIdAndUpdate(
+    await userModel.findByIdAndUpdate(
       { _id: req.userId },
       {
         cnicNumber,
+        $set: { tryAgainToBecomeSeller: false },
       },
       { upsert: true, new: true }
     );
-    res.status(201).json({
-      success: true,
-      message: "Cnic Number Uploaded",
-      data: changeCnicNumber,
-    });
+    let status;
+    await userModel
+      .findOne({ _id: req.userId })
+      .then((user) => {
+        if (user) {
+          status = checkUserForBuyerApproval(user);
+
+          user.statusOfUser = status;
+          return user.save().then((updatedUser) => {
+            return res.status(201).json({
+              success: true,
+              message: "Cnic Number Uploaded",
+              data: updatedUser,
+            });
+          });
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
   } catch (error) {
     return res.status(422).json({
       success: false,
@@ -283,6 +310,10 @@ const becomeSellerCnicNumber = async (req, res) => {
 
 const becomeSellerCnicFront = async (req, res) => {
   try {
+    if (!req.file) {
+      throw new Error("Please upload a file for cnic front picture");
+    }
+
     const checkAlreadyExistingCnic = await userModel.findById({
       _id: req.userId,
     });
@@ -302,14 +333,30 @@ const becomeSellerCnicFront = async (req, res) => {
       { _id: req.userId },
       {
         cnicFront: req.file?.path?.replace("public", ""),
+        $set: { tryAgainToBecomeSeller: false },
       },
       { upsert: true, new: true }
     );
-    res.status(201).json({
-      success: true,
-      message: "CnicFront Picture Uploaded",
-      data: changeCnicFrontPic,
-    });
+    let status;
+    await userModel
+      .findOne({ _id: req.userId })
+      .then((user) => {
+        if (user) {
+          status = checkUserForBuyerApproval(user);
+
+          user.statusOfUser = status;
+          return user.save().then((updatedUser) => {
+            return res.status(201).json({
+              success: true,
+              message: "Cnic front picture Uploaded",
+              data: updatedUser,
+            });
+          });
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
   } catch (error) {
     return res.status(422).json({
       success: false,
@@ -321,6 +368,9 @@ const becomeSellerCnicFront = async (req, res) => {
 
 const becomeSellerCnicBack = async (req, res) => {
   try {
+    if (!req.file) {
+      throw new Error("Please upload a file for cnic front picture");
+    }
     const checkAlreadyExistingCnic = await userModel.findById({
       _id: req.userId,
     });
@@ -340,14 +390,30 @@ const becomeSellerCnicBack = async (req, res) => {
       { _id: req.userId },
       {
         cnicBack: req.file?.path?.replace("public", ""),
+        $set: { tryAgainToBecomeSeller: false },
       },
       { upsert: true, new: true }
     );
-    res.status(201).json({
-      success: true,
-      message: "CnicBack Picture Uploaded",
-      data: changeCnicFrontPic,
-    });
+    let status;
+    await userModel
+      .findOne({ _id: req.userId })
+      .then((user) => {
+        if (user) {
+          status = checkUserForBuyerApproval(user);
+
+          user.statusOfUser = status;
+          return user.save().then((updatedUser) => {
+            return res.status(201).json({
+              success: true,
+              message: "Cnic back picture Uploaded",
+              data: updatedUser,
+            });
+          });
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
   } catch (error) {
     return res.status(422).json({
       success: false,

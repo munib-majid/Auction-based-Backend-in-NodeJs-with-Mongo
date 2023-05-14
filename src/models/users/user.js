@@ -55,8 +55,13 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    statusForDisapproval: {
+    statusOfUser: {
       type: String,
+      default: "You Can apply to become seller and wait for admin approval",
+    },
+    tryAgainToBecomeSeller: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

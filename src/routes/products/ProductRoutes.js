@@ -24,7 +24,7 @@ ProductRouter.get(
 ProductRouter.get("/specific_product/:product_id", auth, product.getOneProduct);
 ProductRouter.get(
   "/:subcategory_id",
-  auth,
+  // auth,
   product.getSpecificProductSubCategory
 );
 ProductRouter.post(

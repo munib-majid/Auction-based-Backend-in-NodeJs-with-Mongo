@@ -11,23 +11,27 @@ class BidAgainstPost {
       const product = await ProductModel.findById(productId);
       // console.log("product is ", product);
       if (product.productType != "Bidding Item") {
-        throw new Error("you cannot add bid price to a used product category");
+        throw new Error("you cannot add bid price to a used product category.");
+      }
+      if (userId == product.userId) {
+        throw new Error("User cannot place bid to its own product.");
       }
       const bidTimer = await BidsAgainstPostModel.findOne({ productId });
       // console.log("date 2 passing value is", product.timeStarted);
 
       if (bidTimer) {
+        // console.log("product created at ?", product.createdAt);
         const date1 = new Date();
-        const date2 = new Date(product.timeStarted);
+        // const date2 = new Date(product.timeStarted);
+        const date2 = new Date(product.createdAt);
         console.log("date1 is", date1);
         console.log("date2 is", date2);
         const diffInMinutes = date1.getMinutes() - date2.getMinutes();
         console.log(diffInMinutes);
-        if (diffInMinutes >= 10080) {
-          //10080 minutes in week
+        const minutesInAWeek = 10080;
+        if (diffInMinutes >= minutesInAWeek) {
           throw new Error("Bidding time is now Expired ");
         }
-        // console.log("bid exist");
 
         const highestBid = await BidsAgainstPostModel.aggregate([
           {
@@ -39,7 +43,6 @@ class BidAgainstPost {
             $group: {
               _id: "$productId", //pipelines id
               maxBid: { $max: "$bidingPrice" },
-              // buyer: { $push: { customerId: userId, productId: productId } },
             },
           },
         ]);
@@ -55,22 +58,22 @@ class BidAgainstPost {
           console.log("in if");
         }
       } else {
+        console.log("in else");
         const productPriceCheck = await ProductModel.findOne({
           _id: productId,
         });
         console.log("price of the product is", productPriceCheck.productPrice);
-        if (productPriceCheck.productPrice > bidingPrice) {
+        if (productPriceCheck.productPrice >= bidingPrice) {
           throw new Error("Bid should not be less then the base price");
         }
         //fist time bid and you will create the timer here
 
-        console.log("in else");
-        const setDateInProduct = await ProductModel.findByIdAndUpdate(
-          { _id: productId },
-          { timeStarted: new Date() },
-          { new: true }
-        );
-        console.log(`the date saved is ${setDateInProduct.timeStarted}`);
+        // const setDateInProduct = await ProductModel.findByIdAndUpdate(
+        //   { _id: productId },
+        //   { timeStarted: new Date() },
+        //   { new: true }
+        // );
+        // console.log(`the date saved is ${setDateInProduct.timeStarted}`);
       }
 
       const bidding = await BidsAgainstPostModel.findOneAndUpdate(
@@ -128,7 +131,7 @@ class BidAgainstPost {
       ]);
       console.log(highestBid);
       let highestBidUser = "No user Has placed bid";
-      let maxBid = "Place your first Bid";
+      let maxBid = 0;
       if (highestBid[0] != null) {
         console.log("in check if that bid exist or not ");
         let user_id = highestBid[0].userId;

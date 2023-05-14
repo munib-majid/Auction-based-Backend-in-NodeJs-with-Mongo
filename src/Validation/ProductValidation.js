@@ -11,6 +11,7 @@ const ProductSchema = yup.object({
   productPrice: yup
     .number()
     .required("Please enter the price of the product.")
+    .typeError("The price must be in digits")
     .test(
       "Valid_Price",
       "Please enter valid price, price cannot be negative.",
@@ -18,6 +19,12 @@ const ProductSchema = yup.object({
         return value > 0 ? true : false;
       }
     ),
+
+  subcategoryId: yup
+    .string()
+    .required("Please select Category then Subcategory"),
+
+  productType: yup.string().required("Please select Product Type"),
 });
 
 module.exports = ProductSchema;

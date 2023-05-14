@@ -71,7 +71,7 @@ class AdminController {
         {
           _id: req.params.user_id,
         },
-        { role: "seller" },
+        { role: "seller", statusOfUser: "You are now a seller" },
         { new: true }
       );
       res.status(201).json({
@@ -89,20 +89,21 @@ class AdminController {
   }
   async disapproveSeller(req, res, next) {
     try {
-      const approvalOfSeller = await UserModel.findOneAndUpdate(
+      const { statusOfUser } = req.body;
+      const disapprovalOfSeller = await UserModel.findOneAndUpdate(
         {
           _id: req.params.user_id,
         },
         {
-          statusForDisapproval:
-            "Your information is not matching with the CNIC pictures kindly update you information and apply again",
+          statusOfUser,
+          $set: { tryAgainToBecomeSeller: true },
         },
         { new: true }
       );
       res.status(201).json({
         success: true,
         message: "User was not upgraded to seller",
-        data: approvalOfSeller,
+        data: disapprovalOfSeller,
       });
     } catch (error) {
       res.status(422).json({
@@ -117,9 +118,11 @@ class AdminController {
       const userWithCnicDetails = await UserModel.find(
         {
           role: "buyer",
+          tryAgainToBecomeSeller: false,
           cnicNumber: { $exists: true },
           cnicFront: { $exists: true },
           cnicBack: { $exists: true },
+          dp: { $exists: true },
         },
         {
           dp: 1,
