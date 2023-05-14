@@ -45,7 +45,7 @@ userRouter.post(
 );
 
 userRouter.patch("/edit-role", auth, editRole);
-userRouter.patch(
+userRouter.post(
   "/edit-seller-profile",
   auth,
   role(["seller"]),

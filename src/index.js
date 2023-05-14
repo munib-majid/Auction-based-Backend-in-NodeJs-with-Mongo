@@ -9,6 +9,7 @@ const CategoryRouter = require("./routes/products/CategoryRouter");
 const SubCategoryRouter = require("./routes/products/SubCategoryRouter");
 const CommentsRouter = require("./routes/products/CommentsRouter");
 const BidsAgainstPostRouter = require("./routes/products/BidsAgainstPostRouter");
+const ForgetPasswordRouter = require("./routes/users/ForgetPasswordRoute");
 const app = express();
 const dotenv = require("dotenv");
 const path = require("path");
@@ -48,6 +49,8 @@ app.use("/favorite", FavoriteRouter);
 app.use("/rating", SellerRatingRouter);
 
 app.use("/bidding", BidsAgainstPostRouter);
+
+app.use("/forget_password", ForgetPasswordRouter);
 
 app.use("/notes", notesRouter);
 

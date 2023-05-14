@@ -12,6 +12,7 @@ class Product {
       return el.path?.replace("public", "");
     });
 
+    console.log("userid is ", req.userId);
     let userId = req.userId;
     try {
       const newProduct = await productModel.create({

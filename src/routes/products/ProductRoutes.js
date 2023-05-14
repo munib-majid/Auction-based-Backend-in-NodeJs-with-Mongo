@@ -2,7 +2,8 @@ const Product = require("../../controllers/products/ProductController");
 const ImageUpload = require("../../helper/ImageUpload.js");
 const imageUploader = new ImageUpload("public/product");
 const auth = require("../../middlewares/auth");
-const role = require("../../middlewares/role");
+// const role = require("../../middlewares/role");
+const validateNewProduct = require("../../middlewares/ValidateProduct");
 
 const product = new Product();
 
@@ -30,6 +31,7 @@ ProductRouter.post(
   "/",
   auth,
   imageUploader.getUpload().array("product_picture"),
+  validateNewProduct,
   product.setProduct
 );
 ProductRouter.post(

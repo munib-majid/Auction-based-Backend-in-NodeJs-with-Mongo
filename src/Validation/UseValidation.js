@@ -44,7 +44,7 @@ const UserSchema = yup.object({
   address: yup.string().required("Please enter your address"),
   dob: yup
     .date()
-    .required()
+    .required("Please enter DOB.")
     // .matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
     .test("valid_date", "Please enter valid date.", (value) => {
       let dob = moment(value, "YYYY-MM-DD", true);

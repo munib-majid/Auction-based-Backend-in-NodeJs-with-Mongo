@@ -55,6 +55,13 @@ class BidAgainstPost {
           console.log("in if");
         }
       } else {
+        const productPriceCheck = await ProductModel.findOne({
+          _id: productId,
+        });
+        console.log("price of the product is", productPriceCheck.productPrice);
+        if (productPriceCheck.productPrice > bidingPrice) {
+          throw new Error("Bid should not be less then the base price");
+        }
         //fist time bid and you will create the timer here
 
         console.log("in else");
@@ -121,7 +128,7 @@ class BidAgainstPost {
       ]);
       console.log(highestBid);
       let highestBidUser = "No user Has placed bid";
-      let maxBid = 0;
+      let maxBid = "Place your first Bid";
       if (highestBid[0] != null) {
         console.log("in check if that bid exist or not ");
         let user_id = highestBid[0].userId;
