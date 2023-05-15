@@ -26,6 +26,7 @@ const role = require("../../middlewares/role.js");
 const auth = require("../../middlewares/auth");
 
 const imageUploader = new ImageUpload("public/dp");
+const imageUploader2 = new ImageUpload("public/junk");
 
 const cnicFrontPic = new ImageUpload("public/CNIC_FRONT");
 
@@ -50,6 +51,7 @@ userRouter.post(
   auth,
   role(["seller"]),
   EditSellerValidation,
+  imageUploader2.getUpload().single("profile_picture"),
   editSeller
 );
 

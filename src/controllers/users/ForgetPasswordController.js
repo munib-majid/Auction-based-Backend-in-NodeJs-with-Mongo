@@ -21,14 +21,16 @@ class ForgetPassword {
         lowerCaseAlphabets: false,
         specialChars: false,
       });
+      // console.log("OTP genrerated is", OTP);
       await transporter.sendMail({
         from: '"Bidders Bay 👻" <info@biddersbay.online>',
         to: email,
         subject: "Forgot Password",
         text: `Use the following 6 digit code to recover your account.\n${OTP}\nUse the code within 5 minutes.\nDon't share this code with anyone.\nIf you have any query send us a mail at info@biddersbay.online`,
       });
-
+      // console.log("mail sent");
       const data = await ForgetPasswordModel.create({ email, resetCode: OTP });
+      //  { expireAfterSeconds: 120 }
 
       return res.status(200).json({
         success: true,
@@ -48,7 +50,10 @@ class ForgetPassword {
     try {
       const resetApproval = await ForgetPasswordModel.findOne({
         email,
-      });
+      })
+        .sort({ createdAt: -1 })
+        .exec();
+      // console.log("latest reset code is ", resetApproval.resetCode);
       const date1 = new Date();
       const date2 = new Date(resetApproval.createdAt);
       const diffInMinutes = date1.getMinutes() - date2.getMinutes();

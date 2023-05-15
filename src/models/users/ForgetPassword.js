@@ -10,6 +10,7 @@ const ForgetPasswordSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    // expireAt: { type: Date, default: Date.now, expires: 0 },
   },
   { timestamps: true }
 );

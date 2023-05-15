@@ -31,10 +31,10 @@ const otpGenerator = require("otp-generator");
 //   specialChars: false,
 //   digits: true,
 // });
-const otp = otpGenerator.generate(6, {
-  digits: true,
-  upperCaseAlphabets: false,
-  lowerCaseAlphabets: false,
-  specialChars: false,
-});
-console.log(`otp is \n ${otp}`);
+// const otp = otpGenerator.generate(6, {
+//   digits: true,
+//   upperCaseAlphabets: false,
+//   lowerCaseAlphabets: false,
+//   specialChars: false,
+// });
+// console.log(`otp is \n ${otp}`);
