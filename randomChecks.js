@@ -33,7 +33,7 @@ const otpGenerator = require("otp-generator");
 // });
 const otp = otpGenerator.generate(6, {
   digits: true,
-  upperCaseAlphabets: true,
+  upperCaseAlphabets: false,
   lowerCaseAlphabets: false,
   specialChars: false,
 });

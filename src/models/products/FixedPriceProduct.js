@@ -35,9 +35,9 @@ const ProductSchema = mongoose.Schema(
       type: String,
       enum: ["Used Item", "Bidding Item"],
     },
-    timeStarted: {
-      type: Date,
-    },
+    // timeStarted: {
+    //   type: Date,
+    // },
   },
   { timestamps: true }
 );

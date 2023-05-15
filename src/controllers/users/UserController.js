@@ -280,7 +280,7 @@ const becomeSellerCnicNumber = async (req, res) => {
       { upsert: true, new: true }
     );
     let status;
-    await userModel
+    userModel
       .findOne({ _id: req.userId })
       .then((user) => {
         if (user) {
@@ -338,7 +338,7 @@ const becomeSellerCnicFront = async (req, res) => {
       { upsert: true, new: true }
     );
     let status;
-    await userModel
+    userModel
       .findOne({ _id: req.userId })
       .then((user) => {
         if (user) {
@@ -395,7 +395,7 @@ const becomeSellerCnicBack = async (req, res) => {
       { upsert: true, new: true }
     );
     let status;
-    await userModel
+    userModel
       .findOne({ _id: req.userId })
       .then((user) => {
         if (user) {

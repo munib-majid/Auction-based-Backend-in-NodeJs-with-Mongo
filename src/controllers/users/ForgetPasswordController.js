@@ -2,6 +2,7 @@ const ForgetPasswordModel = require("../../models/users/ForgetPassword");
 const UserModel = require("../../models/users/user");
 const { transporter } = require("../../helper/index.js");
 const otp_Generator = require("otp-generator");
+const bcrypt = require("bcrypt");
 
 class ForgetPassword {
   async sendOTP(req, res) {
@@ -16,7 +17,7 @@ class ForgetPassword {
       }
       const OTP = otp_Generator.generate(6, {
         digits: true,
-        upperCaseAlphabets: true,
+        upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
         specialChars: false,
       });
@@ -24,21 +25,75 @@ class ForgetPassword {
         from: '"Bidders Bay 👻" <info@biddersbay.online>',
         to: email,
         subject: "Forgot Password",
-        text: `Use the following 6 digit code to recover your account.\n${OTP}\nDon't share this code with anyone.\nIf you have any `, // plain text body
+        text: `Use the following 6 digit code to recover your account.\n${OTP}\nUse the code within 5 minutes.\nDon't share this code with anyone.\nIf you have any query send us a mail at info@biddersbay.online`,
       });
-      res.status(200).json({
-        success: false,
-        message: "Email sent with code",
+
+      const data = await ForgetPasswordModel.create({ email, resetCode: OTP });
+
+      return res.status(200).json({
+        success: true,
+        message: "Email with code  sent to your email",
+        // data: data,
       });
     } catch (error) {
-      res.status(422).json({
+      return res.status(422).json({
+        success: false,
+        message: "Email was not sent.",
+        error: error.message,
+      });
+    }
+  }
+  async verifyOTP(req, res) {
+    const { OTP, email } = req.body;
+    try {
+      const resetApproval = await ForgetPasswordModel.findOne({
+        email,
+      });
+      const date1 = new Date();
+      const date2 = new Date(resetApproval.createdAt);
+      const diffInMinutes = date1.getMinutes() - date2.getMinutes();
+      if (diffInMinutes >= 5) {
+        throw new Error(
+          "Your OTP is expired kindly generate a new OTP to reset Password."
+        );
+      }
+      if (resetApproval.resetCode != OTP) {
+        throw new Error("OTP was not matched kindly try again");
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "You will be shown reset password screen",
+        // data: resetApproval,
+      });
+    } catch (error) {
+      return res.status(422).json({
         success: false,
         message: error.message,
       });
     }
   }
-  async verifyOTP(req, res) {
-    res.send("OTP WORKING");
+  async changePassword(req, res) {
+    const { password, email } = req.body;
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const updatedPasswordUser = await UserModel.findOneAndUpdate(
+        { email },
+        { password: hashedPassword },
+        { new: true }
+      );
+      return res.status(201).json({
+        success: true,
+        message: "Your password is changed",
+        // data: updatedPasswordUser,
+      });
+    } catch (error) {
+      return res.status(422).json({
+        success: false,
+        message: "Password was not changed",
+        error: error.message,
+      });
+    }
   }
 }
 
