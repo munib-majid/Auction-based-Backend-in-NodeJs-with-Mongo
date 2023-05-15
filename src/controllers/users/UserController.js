@@ -9,11 +9,11 @@ const cityData = async (req, res, next) => {
   return res.status(200).json({ data: cities });
 };
 const editRole = async (req, res) => {
-  const { role } = req.body;
+  const { role, statusOfUser } = req.body;
   try {
     const editRole = await userModel.findByIdAndUpdate(
       { _id: req.userId },
-      { role },
+      { role, statusOfUser },
       { new: true }
     );
     return res.status(201).json({ success: true, data: editRole });
