@@ -50,8 +50,8 @@ userRouter.post(
   "/edit-seller-profile",
   auth,
   role(["seller"]),
-  EditSellerValidation,
   imageUploader2.getUpload().single("profile_picture"),
+  EditSellerValidation,
   editSeller
 );
 
