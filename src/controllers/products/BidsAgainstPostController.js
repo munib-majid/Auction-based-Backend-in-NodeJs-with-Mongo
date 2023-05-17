@@ -96,6 +96,7 @@ class BidAgainstPost {
   }
   async getBids(req, res) {
     try {
+      //test
       const id = req.params.product_id;
       const postOfUser = await ProductModel.findOne({
         _id: id,
