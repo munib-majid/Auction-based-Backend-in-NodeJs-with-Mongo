@@ -35,6 +35,15 @@ const ProductSchema = mongoose.Schema(
       type: String,
       enum: ["Used Item", "Bidding Item"],
     },
+    closeBid: {
+      type: Boolean,
+      default: false,
+    },
+    StatusOfActive: {
+      type: Boolean,
+      default: true,
+    },
+
     // timeStarted: {
     //   type: Date,
     // },

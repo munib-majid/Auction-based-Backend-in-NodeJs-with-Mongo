@@ -49,6 +49,7 @@ const signup = async (req, res) => {
       address,
       dob,
       currentCity,
+      dp: "",
     });
 
     const token = jwt.sign(
@@ -90,11 +91,9 @@ const signin = async (req, res) => {
       token: token,
     });
   } catch (error) {
-    return res.status(422).json({
-      success: false,
-      message: "User was not logged in",
-      error: error.message,
-    });
+    res
+      .status(422)
+      .json({ success: false, message: error.message, error: error.message });
   }
 };
 

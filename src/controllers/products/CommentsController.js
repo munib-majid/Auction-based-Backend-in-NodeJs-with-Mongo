@@ -83,7 +83,7 @@ class Comments {
       res.status(500).json({
         success: false,
         message: "something went wrong",
-        error,
+        error: error.message,
       });
     }
   }

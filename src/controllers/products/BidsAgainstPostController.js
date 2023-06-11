@@ -24,10 +24,9 @@ class BidAgainstPost {
         const date1 = new Date();
         // const date2 = new Date(product.timeStarted);
         const date2 = new Date(product.createdAt);
-        console.log("date1 is", date1);
-        console.log("date2 is", date2);
-        const diffInMinutes = date1.getMinutes() - date2.getMinutes();
-        console.log(diffInMinutes);
+        var diff = (date1.getTime() - date2.getTime()) / 1000;
+        diff /= 60;
+        const DifferenceInMinutes = Math.abs(Math.round(diff));
         const minutesInAWeek = 10080;
         if (diffInMinutes >= minutesInAWeek) {
           throw new Error("Bidding time is now Expired ");
@@ -96,20 +95,11 @@ class BidAgainstPost {
   }
   async getBids(req, res) {
     try {
-      //test
       const id = req.params.product_id;
-      const postOfUser = await ProductModel.findOne({
-        _id: id,
-        userId: req.userId,
-      });
-      if (!postOfUser) {
-        //un comment this check to let the user of the post only see these bids
-        // throw new Error("Invalid user accessing the private data of bidding");
-      }
 
       const allBidsAgainstPost = await BidsAgainstPostModel.find({
         productId: id,
-      });
+      }).populate("userId");
       const highestBid = await BidsAgainstPostModel.aggregate([
         {
           $match: {
@@ -160,8 +150,54 @@ class BidAgainstPost {
       });
     }
   }
-  async deleteBids(req, res) {}
-  async updateBids(req, res) {}
+  async closeBidding(req, res) {
+    try {
+      const id = req.params.product_id;
+      const bidPost = await ProductModel.findOneAndUpdate(
+        { _id: id, userId: req.userId },
+        { closeBid: true },
+        { new: true }
+      );
+      if (!bidPost) {
+        throw new Error("This is not your post you cannot edit this. ");
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Your bidding is closed successfully",
+        data: bidPost,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+  async resumeBidding(req, res) {
+    try {
+      const id = req.params.product_id;
+      const bidPost = await ProductModel.findOneAndUpdate(
+        { _id: id, userId: req.userId },
+        { closeBid: false },
+        { new: true }
+      );
+      if (!bidPost) {
+        throw new Error("This is not your post you cannot edit this. ");
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Your bidding is resumed successfully",
+        data: bidPost,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 module.exports = BidAgainstPost;

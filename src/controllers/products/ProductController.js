@@ -63,7 +63,9 @@ class Product {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: error.message });
+      res
+        .status(422)
+        .json({ success: false, message: error.message, error: error.message });
     }
   }
   async getAllProductsBids(req, res) {
@@ -78,7 +80,9 @@ class Product {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: error.message });
+      res
+        .status(422)
+        .json({ success: false, message: error.message, error: error.message });
     }
   }
   async getAllProductsUsed(req, res) {
@@ -98,8 +102,7 @@ class Product {
   }
   async getAllProduct(req, res) {
     try {
-      const allProducts =
-        await productModel.find(); /*.populate("subcategoryId");*/
+      const allProducts = await productModel.find();
       res.status(200).json({
         success: true,
         message: "found all products",
@@ -174,6 +177,31 @@ class Product {
     }
   }
 
+  async addToDeletedProducts(req, res) {
+    try {
+      const productDeactivated = await productModel.findOneAndUpdate(
+        {
+          _id: req.params.product_id,
+          userId: req.userId,
+        },
+        { StatusOfActive: false },
+        { new: true }
+      );
+      if (!productDeactivated) {
+        throw new Error("This is not your product you cannot remove it");
+      }
+      res.status(201).json({
+        success: true,
+        message: "You product is added to deleted posts",
+        data: productDeactivated,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
   async deleteProduct(req, res) {
     const id = req.params.id;
     const loggedInUserId = req.userId;

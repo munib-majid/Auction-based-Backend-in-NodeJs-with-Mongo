@@ -41,5 +41,10 @@ ProductRouter.post(
   product.updateProduct
 );
 ProductRouter.delete("/:id", auth, product.deleteProduct);
+ProductRouter.put(
+  "/add_to_deleted/:product_id",
+  auth,
+  product.addToDeletedProducts
+);
 
 module.exports = ProductRouter;
