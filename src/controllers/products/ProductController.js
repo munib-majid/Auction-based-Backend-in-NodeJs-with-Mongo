@@ -3,6 +3,7 @@ const BidsAgainstPostModel = require("../../models/products/BidsAgainstPostModel
 const CommentsModel = require("../../models/products/CommentsModel");
 const FavoritesModel = require("../../models/products/FavoritePostOfUser");
 const fs = require("fs");
+const { transporter } = require("../../helper/index.js");
 
 class Product {
   async setProduct(req, res) {
@@ -255,6 +256,75 @@ class Product {
       });
     } catch (error) {
       res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+  async removePostOfWrongCategory(req, res) {
+    try {
+      const removingProduct = await productModel
+        .findOneAndUpdate(
+          { _id: req.params.product_id },
+          { StatusOfActive: true },
+          { new: true }
+        )
+        .populate("userId");
+      const emailOfUser = removingProduct.userId.email;
+      const userFirstName = removingProduct.userId.firstName;
+      const userSecondName = removingProduct.userId.lastName;
+      const titleOfPost = removingProduct.title;
+      if (removingProduct) {
+        await transporter.sendMail({
+          from: '"Bidders Bay " <info@biddersbay.online>',
+          to: emailOfUser,
+          subject: "Post removal due to wrong category",
+
+          text: `Dear ${userFirstName} ${userSecondName} \n\nYour post with Title: ${titleOfPost} is removed because it was in the wrong category if you want your ad to be live again contact admins.\n\nBut if its really in the wrong category you need to post it again.\nYou can find your deleted ad in removed section in your profile.\n\nRegard Bidders Bay`,
+        });
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "Post activated successfully.",
+        data: removingProduct,
+      });
+    } catch (error) {
+      return res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+  async activeTheAdPostOfWrongCategory(req, res) {
+    try {
+      const activatingProductAgain = await productModel
+        .findOneAndUpdate(
+          { _id: req.params.product_id },
+          { StatusOfActive: true },
+          { new: true }
+        )
+        .populate("userId");
+      const emailOfUser = activatingProductAgain.userId.email;
+      const userFirstName = activatingProductAgain.userId.firstName;
+      const userSecondName = activatingProductAgain.userId.lastName;
+      const titleOfPost = activatingProductAgain.title;
+
+      if (activatingProductAgain) {
+        await transporter.sendMail({
+          from: '"Bidders Bay " <info@biddersbay.online>',
+          to: emailOfUser,
+          subject: "Post activation ",
+          text: `Dear ${userFirstName} ${userSecondName} \n\nYour post with Title: ${titleOfPost} is active again sorry for inconvenience.\n\nRegard Bidders Bay`,
+        });
+      }
+      return res.status(201).json({
+        success: true,
+        message: "Post removed successfully.",
+        data: activatingProductAgain,
+      });
+    } catch (error) {
+      return res.status(422).json({
         success: false,
         message: error.message,
       });

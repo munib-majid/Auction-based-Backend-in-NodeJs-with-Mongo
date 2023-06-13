@@ -104,13 +104,13 @@ class PaymentSS {
       });
       const emailOfUser = payment.postId.userId.email;
       const userFirstName = payment.postId.userId.firstName;
-      const userSecondName = payment.postId.userId.secondName;
+      const userSecondName = payment.postId.userId.lastName;
 
       await transporter.sendMail({
         from: '"Bidders Bay " <info@biddersbay.online>',
-        to: email,
+        to: emailOfUser,
         subject: "Payment for feature post is disapproved",
-        text: `Dear ${userFirstName} ${userLastName} \n Your payment was disapproved because the payment was not received in our bank account.\nKindly share the payment proof again after uploading payment proof again.\nThis message is auto generated if you have any more quires reply to this mail.\nOur admins will try to reach you in 24 hours.`,
+        text: `Dear ${userFirstName} ${userSecondName} \n\nYour payment was disapproved because the payment was not received in our bank account.\nKindly share the payment proof again after uploading payment proof again.\nThis message is auto generated if you have any more quires reply to this mail.\nOur admins will try to reach you in 24 hours.`,
       });
       res.status(201).json({
         success: true,

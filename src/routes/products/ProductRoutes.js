@@ -4,6 +4,7 @@ const imageUploader = new ImageUpload("public/product");
 const auth = require("../../middlewares/auth");
 // const role = require("../../middlewares/role");
 const validateNewProduct = require("../../middlewares/ValidateProduct");
+const adminAuth = require("../../middlewares/AdminAuth");
 
 const product = new Product();
 
@@ -45,6 +46,18 @@ ProductRouter.put(
   "/add_to_deleted/:product_id",
   auth,
   product.addToDeletedProducts
+);
+
+ProductRouter.put(
+  "/remove_wrong_category_product/:product_id",
+  adminAuth,
+  product.removePostOfWrongCategory
+);
+
+ProductRouter.put(
+  "/activate_wrong_category_product/:product_id",
+  adminAuth,
+  product.activeTheAdPostOfWrongCategory
 );
 
 module.exports = ProductRouter;
