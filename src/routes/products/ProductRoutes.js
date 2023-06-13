@@ -39,9 +39,13 @@ ProductRouter.post(
   "/:id",
   auth,
   imageUploader.getUpload().array("product_picture"),
+  // validateNewProduct,
   product.updateProduct
 );
 ProductRouter.delete("/:id", auth, product.deleteProduct);
+
+ProductRouter.put("/image/:id", auth, product.deleteProductImage);
+
 ProductRouter.put(
   "/add_to_deleted/:product_id",
   auth,

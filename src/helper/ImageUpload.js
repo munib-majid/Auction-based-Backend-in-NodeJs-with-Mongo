@@ -1,5 +1,7 @@
 const multer = require("multer");
 const path = require("path");
+const uuid = require("uuid");
+
 class ImageUpload {
   constructor(folder) {
     this.folder = folder;
@@ -10,12 +12,8 @@ class ImageUpload {
         cb(null, this.folder);
       },
       filename: (req, file, cb) => {
-        cb(
-          null,
-          Date.now() +
-            path.parse(file.originalname).name +
-            path.extname(file.originalname)
-        );
+        const uniqueId = uuid.v4();
+        cb(null, Date.now() + uniqueId + path.extname(file.originalname));
       },
     });
   }

@@ -138,23 +138,26 @@ class Product {
     const id = req.params.id;
     const { title, description, productPrice, subcategoryId } = req.body;
     console.log(req.body);
+    if (productPrice < 0) {
+      throw new Error("Price should be greater than zero");
+    }
 
     try {
       const productToBeUpdated = await productModel.findOne({
         _id: id,
       });
+      if (!productToBeUpdated) {
+        throw new Error("Product not found");
+      }
       let userId = productToBeUpdated.userId;
       const loggedInUserId = req.userId;
       if (loggedInUserId != userId) {
         throw new Error("You cannot update this product.");
       }
-      if (!productToBeUpdated) {
-        throw new Error("Product not found");
-      }
 
-      // let images = req.files.map((el) => {
-      //   return el.path?.replace("public", "");
-      // });
+      let images = req.files.map((el) => {
+        return el.path?.replace("public", "");
+      });
       let updatedProduct = await productModel.findByIdAndUpdate(
         id,
         {
@@ -162,6 +165,11 @@ class Product {
           description,
           productPrice,
           subcategoryId,
+          $push: {
+            images: {
+              $each: images || [],
+            },
+          },
         },
         { new: true }
       );
@@ -177,7 +185,53 @@ class Product {
       });
     }
   }
+  async deleteProductImage(req, res) {
+    const id = req.params.id;
+    const image_name = req.body.image_name;
+    try {
+      if (!image_name) {
+        throw new Error("Image name not specified");
+      }
+      const productToBeUpdated = await productModel.findOne({
+        _id: id,
+      });
+      if (!productToBeUpdated) {
+        throw new Error("Product not found");
+      }
+      let userId = productToBeUpdated.userId;
+      const loggedInUserId = req.userId;
+      if (loggedInUserId != userId) {
+        throw new Error("You cannot update this product.");
+      }
 
+      let updatedProduct = await productModel.findByIdAndUpdate(
+        id,
+        {
+          $pull: {
+            images: image_name,
+          },
+        },
+        { new: true }
+      );
+
+      try {
+        fs.unlinkSync(`${public_path}${image_name}`);
+        // console.log("File removed:", path);
+      } catch (err) {
+        console.error(err);
+      }
+      res.status(200).json({
+        success: true,
+        message: "Product updated successfully.",
+        data: updatedProduct,
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
   async addToDeletedProducts(req, res) {
     try {
       const productDeactivated = await productModel.findOneAndUpdate(
