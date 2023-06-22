@@ -17,16 +17,13 @@ class BidAgainstPost {
         throw new Error("User cannot place bid to its own product.");
       }
       const bidTimer = await BidsAgainstPostModel.findOne({ productId });
-      // console.log("date 2 passing value is", product.timeStarted);
-
       if (bidTimer) {
-        // console.log("product created at ?", product.createdAt);
         const date1 = new Date();
-        // const date2 = new Date(product.timeStarted);
+
         const date2 = new Date(product.createdAt);
         var diff = (date1.getTime() - date2.getTime()) / 1000;
         diff /= 60;
-        const DifferenceInMinutes = Math.abs(Math.round(diff));
+        const diffInMinutes = Math.abs(Math.round(diff));
         const minutesInAWeek = 10080;
         if (diffInMinutes >= minutesInAWeek) {
           throw new Error("Bidding time is now Expired ");
@@ -46,7 +43,7 @@ class BidAgainstPost {
           },
         ]);
         console.log(`highest bid is `);
-        //  console.log(highestBid[0].maxBid);
+        console.log(highestBid[0].maxBid);
         // console.log(highestBid[0].buyer[0].customerId);
         if (highestBid) {
           if (bidingPrice <= highestBid[0].maxBid) {
@@ -54,13 +51,24 @@ class BidAgainstPost {
               "Your Bid Cannot be less than or equal to the highest bid"
             );
           }
-          console.log("in if");
+          // console.log("in if");
         }
       } else {
+        const date1 = new Date();
+
+        const date2 = new Date(product.createdAt);
+        var diff = (date1.getTime() - date2.getTime()) / 1000;
+        diff /= 60;
+        const diffInMinutes = Math.abs(Math.round(diff));
+        const minutesInAWeek = 10080;
+        if (diffInMinutes >= minutesInAWeek) {
+          throw new Error("Bidding time is now Expired ");
+        }
         console.log("in else");
         const productPriceCheck = await ProductModel.findOne({
           _id: productId,
         });
+
         console.log("price of the product is", productPriceCheck.productPrice);
         if (productPriceCheck.productPrice >= bidingPrice) {
           throw new Error("Bid should not be less then the base price");

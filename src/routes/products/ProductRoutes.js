@@ -11,6 +11,7 @@ const product = new Product();
 const ProductRouter = require("express").Router();
 
 ProductRouter.get("/", product.getAllProduct);
+ProductRouter.get("/admin", product.getAllProductForAdmin);
 ProductRouter.get(
   "/bid",
 
@@ -60,7 +61,6 @@ ProductRouter.put(
 
 ProductRouter.put(
   "/activate_wrong_category_product/:product_id",
-  adminAuth,
   product.activeTheAdPostOfWrongCategory
 );
 

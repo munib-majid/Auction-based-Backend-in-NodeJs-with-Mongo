@@ -86,6 +86,7 @@ class Product {
         .json({ success: false, message: error.message, error: error.message });
     }
   }
+
   async getAllProductsUsed(req, res) {
     try {
       const allProducts = await productModel
@@ -93,7 +94,7 @@ class Product {
         .populate("userId");
       res.status(200).json({
         success: true,
-        message: "found all products of type bidding",
+        message: "found all products of type fixed price",
         data: { allProducts },
       });
     } catch (error) {
@@ -107,6 +108,22 @@ class Product {
       res.status(200).json({
         success: true,
         message: "found all products",
+        data: { allProducts },
+      });
+    } catch (error) {
+      res.status(422).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async getAllProductForAdmin(req, res) {
+    try {
+      const allProducts = await productModel.find().populate("subcategoryId");
+      res.status(200).json({
+        success: true,
+        message: "found all products for admin",
         data: { allProducts },
       });
     } catch (error) {
@@ -384,6 +401,16 @@ class Product {
       });
     }
   }
+  //   async getProductsForAdmin(res, req) {
+  //     try {
+  //       res.send("ok");
+  //     } catch (error) {
+  //       return res.status(422).json({
+  //         success: false,
+  //         message: error.message,
+  //       });
+  //     }
+  //   }
 }
 
 module.exports = Product;
