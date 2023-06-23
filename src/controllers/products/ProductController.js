@@ -4,6 +4,7 @@ const CommentsModel = require("../../models/products/CommentsModel");
 const FavoritesModel = require("../../models/products/FavoritePostOfUser");
 const fs = require("fs");
 const { transporter } = require("../../helper/index.js");
+const FeaturedModel = require("../../models/products/PaymentOfFeaturedPost");
 
 class Product {
   async setProduct(req, res) {
@@ -56,7 +57,8 @@ class Product {
     try {
       const allProducts = await productModel
         .find({ userId: req.params.userId_products })
-        .populate("userId");
+        .populate("userId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products of user",
@@ -73,7 +75,8 @@ class Product {
     try {
       const allProducts = await productModel
         .find({ productType: "Bidding Item" })
-        .populate("userId");
+        .populate("userId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products of type bidding",
@@ -91,7 +94,8 @@ class Product {
     try {
       const allProducts = await productModel
         .find({ productType: "Used Item" })
-        .populate("userId");
+        .populate("userId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products of type fixed price",
@@ -104,7 +108,7 @@ class Product {
   }
   async getAllProduct(req, res) {
     try {
-      const allProducts = await productModel.find();
+      const allProducts = await productModel.find().sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products",
@@ -120,7 +124,10 @@ class Product {
 
   async getAllProductForAdmin(req, res) {
     try {
-      const allProducts = await productModel.find().populate("subcategoryId");
+      const allProducts = await productModel
+        .find()
+        .populate("subcategoryId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products for admin",
@@ -137,7 +144,8 @@ class Product {
     try {
       const allProducts = await productModel
         .find({ subcategoryId: req.params.subcategory_id })
-        .populate("subcategoryId");
+        .populate("subcategoryId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
         message: "found all products",
@@ -274,6 +282,32 @@ class Product {
       });
     }
   }
+
+  // async activateYourAdAgain(req, res) {
+  //   try {
+  //     const productActivated = await productModel.findOneAndUpdate(
+  //       {
+  //         _id: req.params.product_id,
+  //         userId: req.userId,
+  //       },
+  //       { StatusOfActive: true },
+  //       { new: true }
+  //     );
+  //     if (!productActivated) {
+  //       throw new Error("This is not your product you cannot remove it");
+  //     }
+  //     res.status(201).json({
+  //       success: true,
+  //       message: "You product is added to deleted posts",
+  //       data: productActivated,
+  //     });
+  //   } catch (error) {
+  //     res.status(422).json({
+  //       success: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // }
   async deleteProduct(req, res) {
     const id = req.params.id;
     const loggedInUserId = req.userId;
@@ -304,6 +338,9 @@ class Product {
       const favoritesToBeDeleted = await FavoritesModel.deleteMany({
         postId: id,
       });
+      const featuredToBeDeleted = await FeaturedModel.deleteMany({
+        postId: id,
+      });
 
       let images = productToBeDelete.images;
       await productModel.findOneAndDelete({ _id: id });
@@ -323,6 +360,7 @@ class Product {
         product: { productToBeDelete },
         comments: commentsToBeDeleted,
         favorites: favoritesToBeDeleted,
+        featured: featuredToBeDeleted,
         bids: bidsDeleted,
       });
     } catch (error) {
@@ -401,16 +439,6 @@ class Product {
       });
     }
   }
-  //   async getProductsForAdmin(res, req) {
-  //     try {
-  //       res.send("ok");
-  //     } catch (error) {
-  //       return res.status(422).json({
-  //         success: false,
-  //         message: error.message,
-  //       });
-  //     }
-  //   }
 }
 
 module.exports = Product;

@@ -15,6 +15,9 @@ const PaymentScreenshotSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    approvedDate: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

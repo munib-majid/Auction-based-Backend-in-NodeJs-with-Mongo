@@ -52,6 +52,11 @@ ProductRouter.put(
   auth,
   product.addToDeletedProducts
 );
+// ProductRouter.put(
+//   "/add_to_active/:product_id",
+//   auth,
+//   product.activateYourAdAgain
+// );
 
 ProductRouter.put(
   "/remove_wrong_category_product/:product_id",

@@ -1,7 +1,7 @@
 const PaymentModel = require("../../models/products/PaymentOfFeaturedPost");
 const ProductModel = require("../../models/products/FixedPriceProduct");
 const { transporter } = require("../../helper/index.js");
-
+const moment = require("moment");
 class PaymentSS {
   async postPayment(req, res) {
     try {
@@ -76,7 +76,7 @@ class PaymentSS {
     try {
       const payment = await PaymentModel.findOneAndUpdate(
         { _id: req.params.paymentId },
-        { approvedStatus: true },
+        { approvedStatus: true, approvedDate: new Date() },
         { new: true }
       );
       res.status(201).json({
@@ -127,23 +127,10 @@ class PaymentSS {
   }
   async getFeaturedPosts(req, res) {
     try {
-      const posts = await PaymentModel.find({ approvedStatus: true });
-      const date1 = new Date();
-      for await (const doc of posts) {
-        let date2 = new Date(doc.updatedAt);
-        var diff = (date1.getTime() - date2.getTime()) / 1000;
-        diff /= 60;
-        const DifferenceInMinutes = Math.abs(Math.round(diff));
-        const minutesInAWeek = 10080;
-        if (DifferenceInMinutes >= minutesInAWeek) {
-          console.log("id is ", doc._id);
-          await PaymentModel.findOneAndDelete({
-            _id: doc._id,
-          });
-        }
-      }
+      const sevenDays = moment().add(-7, "days").toISOString();
       const featuredPosts = await PaymentModel.find({
         approvedStatus: true,
+        approvedDate: { $gte: sevenDays },
       }).populate({
         path: "postId",
         populate: {

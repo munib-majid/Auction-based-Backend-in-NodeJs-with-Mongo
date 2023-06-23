@@ -2,6 +2,7 @@ const BidsAgainstPostModel = require("../../models/products/BidsAgainstPostModel
 const ProductModel = require("../../models/products/FixedPriceProduct");
 const UserModel = require("../../models/users/user");
 const mongoose = require("mongoose");
+const moment = require("moment");
 
 class BidAgainstPost {
   async setBids(req, res) {
@@ -16,19 +17,16 @@ class BidAgainstPost {
       if (userId == product.userId) {
         throw new Error("User cannot place bid to its own product.");
       }
+      const now = moment();
+      const created = moment(product.createdAt);
+      const diffInWeeks = now.diff(created, "week", true);
+      console.log({ diffInWeeks });
+      if (diffInWeeks > 1) {
+        throw new Error("Bidding time is now Expired ");
+      }
       const bidTimer = await BidsAgainstPostModel.findOne({ productId });
+
       if (bidTimer) {
-        const date1 = new Date();
-
-        const date2 = new Date(product.createdAt);
-        var diff = (date1.getTime() - date2.getTime()) / 1000;
-        diff /= 60;
-        const diffInMinutes = Math.abs(Math.round(diff));
-        const minutesInAWeek = 10080;
-        if (diffInMinutes >= minutesInAWeek) {
-          throw new Error("Bidding time is now Expired ");
-        }
-
         const highestBid = await BidsAgainstPostModel.aggregate([
           {
             $match: {
@@ -54,16 +52,6 @@ class BidAgainstPost {
           // console.log("in if");
         }
       } else {
-        const date1 = new Date();
-
-        const date2 = new Date(product.createdAt);
-        var diff = (date1.getTime() - date2.getTime()) / 1000;
-        diff /= 60;
-        const diffInMinutes = Math.abs(Math.round(diff));
-        const minutesInAWeek = 10080;
-        if (diffInMinutes >= minutesInAWeek) {
-          throw new Error("Bidding time is now Expired ");
-        }
         console.log("in else");
         const productPriceCheck = await ProductModel.findOne({
           _id: productId,
@@ -115,7 +103,6 @@ class BidAgainstPost {
           },
         },
         {
-          //this will sort the list in dec order so we can get user with highest bid
           $sort: {
             bidingPrice: -1,
           },
