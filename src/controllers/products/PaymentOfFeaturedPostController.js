@@ -131,12 +131,14 @@ class PaymentSS {
       const featuredPosts = await PaymentModel.find({
         approvedStatus: true,
         approvedDate: { $gte: sevenDays },
-      }).populate({
-        path: "postId",
-        populate: {
-          path: "userId",
-        },
-      });
+      })
+        .populate({
+          path: "postId",
+          populate: {
+            path: "userId",
+          },
+        })
+        .sort({ updatedAt: -1 });
 
       res.status(200).json({
         success: true,

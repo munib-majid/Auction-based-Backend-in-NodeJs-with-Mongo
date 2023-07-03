@@ -108,10 +108,13 @@ class Product {
   }
   async getAllProduct(req, res) {
     try {
-      const allProducts = await productModel.find().sort({ createdAt: -1 });
+      const allProducts = await productModel
+        .find()
+        .populate("userId")
+        .sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
-        message: "found all products",
+        message: "Found all products.",
         data: { allProducts },
       });
     } catch (error) {
@@ -375,7 +378,7 @@ class Product {
       const removingProduct = await productModel
         .findOneAndUpdate(
           { _id: req.params.product_id },
-          { StatusOfActive: true },
+          { StatusOfActive: false },
           { new: true }
         )
         .populate("userId");
@@ -429,7 +432,7 @@ class Product {
       }
       return res.status(201).json({
         success: true,
-        message: "Post removed successfully.",
+        message: "Post activated successfully.",
         data: activatingProductAgain,
       });
     } catch (error) {
