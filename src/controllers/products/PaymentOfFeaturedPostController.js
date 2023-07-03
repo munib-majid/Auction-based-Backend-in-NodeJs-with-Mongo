@@ -40,7 +40,14 @@ class PaymentSS {
   }
   async getPaymentLists(req, res) {
     try {
-      const payments = await PaymentModel.find({ approvedStatus: false });
+      const payments = await PaymentModel.find({
+        approvedStatus: false,
+      }).populate({
+        path: "postId",
+        populate: {
+          path: "userId",
+        },
+      });
       res.status(200).json({
         success: true,
         message: "The list of Payment screenshots are these.",
@@ -58,6 +65,11 @@ class PaymentSS {
     try {
       const payment = await PaymentModel.findOne({
         _id: req.params.paymentId,
+      }).populate({
+        path: "postId",
+        populate: {
+          path: "userId",
+        },
       });
       res.status(200).json({
         success: true,

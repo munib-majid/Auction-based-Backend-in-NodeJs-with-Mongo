@@ -286,31 +286,6 @@ class Product {
     }
   }
 
-  // async activateYourAdAgain(req, res) {
-  //   try {
-  //     const productActivated = await productModel.findOneAndUpdate(
-  //       {
-  //         _id: req.params.product_id,
-  //         userId: req.userId,
-  //       },
-  //       { StatusOfActive: true },
-  //       { new: true }
-  //     );
-  //     if (!productActivated) {
-  //       throw new Error("This is not your product you cannot remove it");
-  //     }
-  //     res.status(201).json({
-  //       success: true,
-  //       message: "You product is added to deleted posts",
-  //       data: productActivated,
-  //     });
-  //   } catch (error) {
-  //     res.status(422).json({
-  //       success: false,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
   async deleteProduct(req, res) {
     const id = req.params.id;
     const loggedInUserId = req.userId;
